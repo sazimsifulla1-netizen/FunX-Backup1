@@ -8,10 +8,25 @@ android {
         applicationId 'com.sazimcodex.funx'
         minSdk 26
         targetSdk 35
-        versionCode 4
-        versionName '3.4'
+        versionCode 5
+        versionName '3.5'
     }
 
+    signingConfigs {
+        funxStable {
+            storeFile file(System.getenv('FUNX_SIGNING_KEYSTORE_PATH') ?: '/tmp/funx-signing-not-configured.p12')
+            storePassword System.getenv('FUNX_SIGNING_PASSWORD') ?: ''
+            keyAlias 'funx-upload'
+            keyPassword System.getenv('FUNX_SIGNING_PASSWORD') ?: ''
+        }
+    }
+    buildTypes {
+        debug {
+            if (System.getenv('FUNX_SIGNING_KEYSTORE_PATH') && System.getenv('FUNX_SIGNING_PASSWORD')) {
+                signingConfig signingConfigs.funxStable
+            }
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17

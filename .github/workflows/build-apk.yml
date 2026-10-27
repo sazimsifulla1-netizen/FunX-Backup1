@@ -1,12 +1,17 @@
 name: Build FunX APK
 on:
   workflow_dispatch:
+    inputs:
+      server_url:
+        description: 'FunX current HTTPS API origin (no trailing slash)'
+        required: true
+        type: string
   push:
     branches: [main, master]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -16,14 +21,33 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
       - name: Install Android SDK 35
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Inject current FunX server address
+        env:
+          FUNX_SERVER_URL: ${{ inputs.server_url || vars.FUNX_SERVER_URL }}
+        run: python3 tools/prepare-client.py
+      - name: Restore stable APK signing key
+        env:
+          FUNX_KEYSTORE_B64: ${{ secrets.FUNX_SIGNING_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$FUNX_KEYSTORE_B64" ]; then
+            printf '%s' "$FUNX_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/funx-upload.p12"
+            chmod 600 "$RUNNER_TEMP/funx-upload.p12"
+            echo "FUNX_SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/funx-upload.p12" >> "$GITHUB_ENV"
+          fi
       - name: Assemble debug APK
-        run: gradle --no-daemon :app:assembleDebug
+        env:
+          FUNX_SIGNING_PASSWORD: ${{ secrets.FUNX_SIGNING_PASSWORD }}
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: FunX-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
