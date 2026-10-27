@@ -1,0 +1,38 @@
+name: Publish FunX v4.1.1 direct APK download
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-funx-v411-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download successful FunX v4.1.1 APK artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ./release
+          gh run download 40603504302 -R sazimsifulla1-netizen/FunX -n FunX-v4.1.1-APK -D ./release
+          test -s release/FunX-v4.1.1.apk
+          unzip -t release/FunX-v4.1.1.apk | grep -q 'No errors detected'
+      - name: Publish directly downloadable APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v4.1.1 -R sazimsifulla1-netizen/FunX >/dev/null 2>&1; then
+            gh release upload v4.1.1 release/FunX-v4.1.1.apk --clobber -R sazimsifulla1-netizen/FunX
+          else
+            gh release create v4.1.1 release/FunX-v4.1.1.apk -R sazimsifulla1-netizen/FunX --target main --title "FunX v4.1.1" --notes "Chat & Inbox refresh, Sent/Delivered/Seen, typing animation with last-message preview, Earn sections, 60-minute activity progress and 30-minute reward refresh, first eligible referral credit, optional consent-controlled location, and password-autofill fix. Requires the compatible FunX backend to be running."
+          fi
