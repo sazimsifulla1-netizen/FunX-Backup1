@@ -10,6 +10,7 @@ const HOST = process.env.HOST || '127.0.0.1';
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname,'data');
 const DB_FILE = path.join(DATA_DIR, 'funx.json');
 const ADMIN_SECRET = process.env.FUNX_ADMIN_SECRET || '';
+const LIVE_LOCATION_WINDOW_MS = 10 * 60 * 1000;
 if (require.main === module && ADMIN_SECRET.length < 20) {
   console.error('Set a strong FUNX_ADMIN_SECRET (at least 20 characters) in server/.env.'); process.exit(1);
 }
@@ -70,6 +71,18 @@ function handleReq(req,res){return (async()=>{
     if(b.action==='test'){try{await sendTelegram('FunX Telegram bot connection test.');return response(res,200,{ok:true});}catch(e){return response(res,502,{error:'Telegram could not deliver a test message'});}}
     if(b.action!=='save'||!/^\d{6,12}:[A-Za-z0-9_-]{20,}$/.test(String(b.token||''))||!/^[-0-9]{5,20}$/.test(String(b.chatId||'')))return response(res,400,{error:'Enter a valid bot token and chat ID'});
     db.bot={token:b.token,chatId:String(b.chatId)};offset=0;persist();enableBotPoll();return response(res,200,{ok:true,configured:true});
+  }
+  if(req.method==='GET'&&route==='/api/admin/locations'){
+    if(!rate(req.socket.remoteAddress||'?', 'admin-locations',30,60000))return response(res,429,{error:'Too many admin requests'});
+    if(!admin(req))return response(res,403,{error:'Invalid server admin secret'});
+    const now=Date.now();
+    const locations=Object.entries(db.locations).flatMap(([uid,l])=>{
+      const member=db.users.find(member=>member.id===uid);
+      if(!member?.shareLocation||!Number.isFinite(l.updated)||l.updated>now+30000||now-l.updated>LIVE_LOCATION_WINDOW_MS)return [];
+      if(!Number.isFinite(l.latitude)||!Number.isFinite(l.longitude))return [];
+      return [{code:member.code,name:member.name,latitude:l.latitude,longitude:l.longitude,accuracy:l.accuracy,updated:l.updated,mapsUrl:formatLoc(l)}];
+    }).sort((a,b)=>b.updated-a.updated);
+    return response(res,200,{locations,activeWindowMinutes:10});
   }
   if(req.method==='GET'&&route==='/api/admin/config'){
     if(!admin(req))return response(res,403,{error:'Invalid server admin secret'});

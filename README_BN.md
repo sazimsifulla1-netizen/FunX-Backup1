@@ -1,3 +1,11 @@
+# FunX v3.4 — Update summary
+
+**এই সংস্করণে সাধারণ ব্যবহারকারীর Server Settings সরানো হয়েছে।** অ্যাপ নিজে সার্ভারে যুক্ত হওয়ার চেষ্টা করবে। অ্যাডমিন প্যানেলে অনুমোদিত/সক্রিয় লোকেশন শেয়ারিংয়ের Google Maps লিংক দেখা যাবে। বিস্তারিত, আপডেট, সীমাবদ্ধতা এবং Termux কমান্ড: **`FUNX_V3_4_UPDATE_BN.md`**।
+
+**সতর্কতা:** ডিফল্ট Cloudflare Quick Tunnel লিংক স্থায়ী নয়; এটি বন্ধ হলে সার্ভার পরিবর্তন/নতুন APK প্রয়োজন হবে। লাইভ লোকেশন শুধু ব্যবহারকারীর স্বচ্ছ সম্মতিতে চালু হয়।
+
+---
+
 # FunX — Termux-tested setup update (v3.1 package)
 
 **Start here:** `TERMUX_QUICKSTART_BN.md` contains the safer HOME-directory installation, integrated API tests, server startup, and health checks. The Android app source remains v3.0; this update changes the Termux scripts and verification guides, not the Android app behavior.

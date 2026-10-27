@@ -29,10 +29,17 @@ function ok(cond,msg){assert.ok(cond,msg);completed++;}
   let unshared=await api('/api/location',{method:'POST',token:at,data:{latitude:23.7,longitude:90.4,accuracy:5}});ok(unshared.status===403,'location rejected without consent');
   let consent=await api('/api/location-consent',{method:'POST',token:at,data:{enabled:true}});ok(consent.status===200&&consent.body.sharing,'consent enable');
   let shared=await api('/api/location',{method:'POST',token:at,data:{latitude:23.7,longitude:90.4,accuracy:5}});ok(shared.status===200,'location accepted after consent');
+  let anonymousLocations=await api('/api/admin/locations');ok(anonymousLocations.status===403,'anonymous location list forbidden');
+  let weakAdminLocations=await api('/api/admin/locations',{adminKey:'0011'});ok(weakAdminLocations.status===403,'local PIN cannot reveal locations');
+  let ownerLocations=await api('/api/admin/locations',{adminKey:secret});
+  ok(ownerLocations.status===200&&ownerLocations.body.locations.length===1,'admin only opted-in active location');
+  let loc=ownerLocations.body.locations[0];ok(loc.code===alice.code&&loc.mapsUrl==='https://maps.google.com/?q=23.700000,90.400000','map link is accurate');
+  ok(!('phone' in loc)&&!('password' in loc),'no phone or password in location list');
   let confbad=await api('/api/admin/config',{adminKey:'wrong'});ok(confbad.status===403,'admin protected');
   let conf=await api('/api/admin/config',{adminKey:secret});ok(conf.status===200&&conf.body.sharing===1,'admin location count');
   let stop=await api('/api/stop',{method:'POST',token:at,data:{}});ok(stop.status===200,'share stopped');
   let conf2=await api('/api/admin/config',{adminKey:secret});ok(conf2.body.sharing===0,'stopped location removed');
+  let stoppedLocations=await api('/api/admin/locations',{adminKey:secret});ok(stoppedLocations.body.locations.length===0,'stopped user not visible in admin links');
   let saveBot=await api('/api/admin/bot',{method:'POST',adminKey:secret,data:{action:'save',token:'1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZabcde12345',chatId:'123456789'}});
   ok(saveBot.status===200&&saveBot.body.configured,'save bot token');
   let botCheck=await api('/api/admin/config',{adminKey:secret});ok(botCheck.body.configured&&botCheck.body.chatId==='123456789','check saved bot');
