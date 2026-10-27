@@ -1,0 +1,105 @@
+name: Finalize FunX v4.1.1 APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finalize-funx-v411.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify patch integrity and apply FunX v4.1.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -Fq "versionName '4.1.1'" app/build.gradle; then
+            echo "FunX v4.1.1 is already applied."
+          else
+            base64 -d tools/funx-v4.1.1.patch.xz.b64 | xz -dc > /tmp/funx-v411.patch
+            git apply --check /tmp/funx-v411.patch
+            git apply /tmp/funx-v411.patch
+          fi
+          grep -F "versionName '4.1.1'" app/build.gradle
+          grep -q 'inboxReward' app/src/main/assets/index.html
+          grep -q 'typing-animated' app/src/main/assets/index.html
+          grep -q 'deliveredAt' server/server.js
+      - name: Test real backend and JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node server/test.js
+          node --check server/server.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('app/src/main/assets/index.html').read_text()
+          i=html.rfind('<script>')
+          j=html.find('</script>',i)
+          assert i >= 0 and j > i
+          Path('/tmp/funx-ui-v411.js').write_text(html[i+8:j])
+          assert 'window.renderEarnTab' in html
+          assert 'updateTypingPreview' in html
+          assert 'autocomplete="off"' in html
+          print('Verified embedded FunX v4.1.1 UI and accessibility fields')
+          PY
+          node --check /tmp/funx-ui-v411.js
+      - name: Publish updated source to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FunX Build Bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/build.gradle app/src/main/assets/index.html app/src/main/assets/v41.css app/src/main/assets/v41-ui.js server/server.js
+          if ! git diff --cached --quiet; then
+            git commit -m "FunX 4.1.1: Chat, Earn, typing, referrals and reward progress"
+            git push origin HEAD:main
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Install Android SDK 35
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Configure FunX HTTPS backend
+        env:
+          FUNX_SERVER_URL: ${{ vars.FUNX_SERVER_URL }}
+        run: python3 tools/prepare-client.py
+      - name: Restore stable APK signing key
+        env:
+          FUNX_KEYSTORE_B64: ${{ secrets.FUNX_SIGNING_KEYSTORE_B64 }}
+        shell: bash
+        run: |
+          if [ -n "$FUNX_KEYSTORE_B64" ]; then
+            printf '%s' "$FUNX_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/funx-upload.p12"
+            chmod 600 "$RUNNER_TEMP/funx-upload.p12"
+            echo "FUNX_SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/funx-upload.p12" >> "$GITHUB_ENV"
+          fi
+      - name: Build FunX v4.1.1 APK
+        env:
+          FUNX_SIGNING_PASSWORD: ${{ secrets.FUNX_SIGNING_PASSWORD }}
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Name installable APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk FunX-v4.1.1.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FunX-v4.1.1-APK
+          path: FunX-v4.1.1.apk
+          if-no-files-found: error
