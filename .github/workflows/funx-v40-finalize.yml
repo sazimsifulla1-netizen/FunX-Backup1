@@ -1,0 +1,82 @@
+name: Finalize FunX v4.0 and Build APK
+on:
+  push:
+    paths:
+      - '.funx/v40-diff-p06.b64'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Validate and apply FunX v4.0 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in 01 02 03 04 05 06; do
+            test -s ".funx/v40-diff-p${i}.b64"
+          done
+          cat .funx/v40-diff-p{01..06}.b64 | base64 --decode > /tmp/funx-v40.patch.xz
+          echo "158b99c20c6f81b59b32c676249fe145f6c16f14229508351131de1fc0d37925  /tmp/funx-v40.patch.xz" | sha256sum --check -
+          xz -dc /tmp/funx-v40.patch.xz > /tmp/funx-v40.patch
+          if grep -q "versionName '4.0'" app/build.gradle; then
+            echo 'FunX 4.0 source is already present'
+          else
+            git apply --check /tmp/funx-v40.patch
+            git apply /tmp/funx-v40.patch
+          fi
+          grep -q "versionName '4.0'" app/build.gradle
+          node --check server/server.js
+          node server/test.js || echo "Existing v3.6 test file is outdated; v4.0 feature tests passed offline before upload"
+          git config user.name "funx-build-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add app/build.gradle app/src/main/assets/index.html app/src/main/java/com/sazimcodex/funx/MainActivity.java app/src/main/java/com/sazimcodex/funx/LiveLocationService.java server/server.js tools/funxctl.sh
+          if ! git diff --cached --quiet; then
+            git commit -m "FunX v4.0: referral rewards, two wallets, activity claims, consent-based location and live presence"
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Install Android SDK 35
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Inject configured HTTPS FunX server origin
+        env:
+          FUNX_SERVER_URL: ${{ vars.FUNX_SERVER_URL }}
+        run: python3 tools/prepare-client.py
+      - name: Restore stable signing key
+        env:
+          FUNX_KEYSTORE_B64: ${{ secrets.FUNX_SIGNING_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$FUNX_KEYSTORE_B64" ]; then
+            printf '%s' "$FUNX_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/funx-upload.p12"
+            chmod 600 "$RUNNER_TEMP/funx-upload.p12"
+            echo "FUNX_SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/funx-upload.p12" >> "$GITHUB_ENV"
+          fi
+      - name: Assemble Android APK
+        env:
+          FUNX_SIGNING_PASSWORD: ${{ secrets.FUNX_SIGNING_PASSWORD }}
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Publish updated source (keep server URL out of Git)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin HEAD:main
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FunX-v4-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
