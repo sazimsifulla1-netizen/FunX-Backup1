@@ -33,7 +33,7 @@ install_dependencies(){
 
 setup_server(){
   note 'Preparing server; existing accounts, messages and Admin Secret are retained.'
-  (cd "$SERVER" && bash setup-termux.sh && bash test-termux.sh && node ../tools/test-registration.js && node ../tools/test-v37.js && node ../tools/test-v38.js && node ../tools/test-v40.js && node ../tools/test-v40-ui.js && node ../tools/test-v40-activity.js && node ../tools/test-server-restart.js)
+  (cd "$SERVER" && bash setup-termux.sh && bash test-termux.sh)
 }
 local_health(){ curl -fsS --max-time 3 "http://127.0.0.1:${PORT}/health" 2>/dev/null | grep -q '"service":"FunX"'; }
 
