@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.provider.Settings;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -40,7 +41,11 @@ public final class MainActivity extends Activity {
 
     @SuppressLint("SetJavaScriptEnabled") @Override public void onCreate(Bundle saved){
         super.onCreate(saved);
-        browser=new WebView(this);browser.setBackgroundColor(0xff080d20);
+        browser=new WebView(this);
+        // User-entered credentials must not trigger Android saved-password overlays.
+        // App login sessions are stored separately using SecureSession.
+        browser.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
+        browser.setBackgroundColor(0xff080d20);
         browser.setWebViewClient(new WebViewClient(){
             @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest req){
                 if("appassets.androidplatform.net".equals(req.getUrl().getHost()))return false;
