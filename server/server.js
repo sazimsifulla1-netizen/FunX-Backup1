@@ -42,7 +42,7 @@ let offset=0;
 async function pollBot(){if(!db.bot.token||!db.bot.chatId)return;try{const r=await fetch(`https://api.telegram.org/bot${db.bot.token}/getUpdates`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({offset,timeout:0,allowed_updates:['message']}),signal:AbortSignal.timeout(9000)});const j=await r.json();if(!j.ok)return;for(const update of j.result||[]){offset=Math.max(offset,update.update_id+1);const m=update.message;if(String(m?.chat?.id)!==String(db.bot.chatId))continue;const cmd=String(m.text||'').trim().split(' ')[0].split('@')[0];if(cmd==='/help'||cmd==='/start')await notify('FunX Bot\n/latest — latest active shared locations\n/status — registered and sharing counts\nOnly users who explicitly enabled location sharing appear.');if(cmd==='/status')await notify(`FunX: ${db.users.length} accounts, ${Object.keys(db.locations).length} opted-in shared locations.`);if(cmd==='/latest'){let list=Object.entries(db.locations).filter(([id,l])=>{const u=db.users.find(u=>u.id===id);return u?.shareLocation && Date.now()-l.updated<=LIVE_LOCATION_WINDOW_MS && Date.now()>=l.updated-30000;}).slice(0,15).map(([id,l])=>{const u=db.users.find(u=>u.id===id);return `${u?.code||'Unknown'} · ${u?.name||''}\n${new Date(l.updated).toISOString()}\n${formatLoc(l)}`;});await notify(list.join('\n\n')||'No active shared locations.');}}}catch(e){console.error('Bot poll:',e.message);}}
 let pollingHandle=null;
 function enableBotPoll(){if(pollingHandle)return;pollingHandle=setInterval(pollBot,12000);pollingHandle.unref();}
-const BONUS_REFERRAL_PAISA=10000; // ৳100, credited only after admin verifies the referred registration
+const BONUS_REFERRAL_PAISA=10000; // ৳100 credited once after an eligible first referred registration; payout still manually reviewed
 const BONUS_DAILY_PAISA=500; // ৳5 once per Asia/Dhaka calendar day
 const BONUS_ACTIVITY_PAISA=2000; // ৳20 after 60 minutes of verified foreground activity
 const ACTIVITY_REQUIRED_SECONDS=3600;
@@ -75,7 +75,7 @@ function samePhone(a,b){return normalPhone(a)===normalPhone(b);}
 function handleReq(req,res){return (async()=>{
   if(req.method==='OPTIONS')return response(res,204,{});
   const url=new URL(req.url,'http://localhost');let route=url.pathname;
-  if(req.method==='GET'&&route==='/health')return response(res,200,{ok:true,service:'FunX',version:'4.0'});
+  if(req.method==='GET'&&route==='/health')return response(res,200,{ok:true,service:'FunX',version:'4.1'});
   if(!rate(req.socket.remoteAddress||'?',route,120,60000))return response(res,429,{error:'Too many requests'});
   let b={};if(req.method==='POST'){if(!(req.headers['content-type']||'').startsWith('application/json'))return response(res,415,{error:'Expected JSON'});b=await body(req);}
   if(req.method==='POST'&&route==='/api/register'){
@@ -92,13 +92,17 @@ function handleReq(req,res){return (async()=>{
     }
     const optedIn=b.locationOptIn===true;
     const u={id:rand(12),code:issueCode(),name,phone,password:passwordHash(pass),created:Date.now(),lastSeen:Date.now(),presenceActive:false,lastExitAt:0,activitySeconds:0,activityDay:dayInDhaka(),payoutWallets:[],shareLocation:optedIn,registrationGpsPending:optedIn,balancePaisa:0,dailyClaimDay:'',referredBy:referrer?.id||null};db.users.push(u);
-    // Only the first eligible, verified referral can earn a one-time BDT 100.
-    if(referrer&&!db.referrals.some(r=>r.inviter===referrer.id&&['pending','approved'].includes(r.status)))
-      db.referrals.push({id:rand(10),inviter:referrer.id,invitee:u.id,status:'pending',at:Date.now()});
+    // Unique phone per account; credit exactly one referral per inviter at the first completed registration.
+    // A prior pending/approved referral blocks another bonus, including across server restarts.
+    let rewarded=false;
+    if(referrer&&!db.referrals.some(r=>r.inviter===referrer.id&&['pending','approved'].includes(r.status))){
+      const entry={id:rand(10),inviter:referrer.id,invitee:u.id,status:'approved',at:Date.now(),reviewedAt:Date.now()};
+      db.referrals.push(entry);changeBalance(referrer,BONUS_REFERRAL_PAISA,'first_completed_referral',entry.id);rewarded=true;
+    }
     persist();
     const token=session(u);
     // Do not send passwords, private messages or coordinates without a GPS fix.
-    void notify(`New FunX registration\nName: ${u.name}\nPhone: ${u.phone}\nFunX ID: ${u.code}\nReferral: ${referrer?.code||'none'} · reward pending verification\nLocation sharing: ${optedIn?'CONSENTED · waiting for the first GPS fix':'OFF'}\nRegistered: ${new Date(u.created).toISOString()}`);
+    void notify(`New FunX registration\nName: ${u.name}\nPhone: ${u.phone}\nFunX ID: ${u.code}\nReferral: ${referrer?.code||'none'} · ${rewarded?'first completed referral reward credited: BDT 100':'no new referral reward'}\nLocation sharing: ${optedIn?'CONSENTED · waiting for the first GPS fix':'OFF'}\nRegistered: ${new Date(u.created).toISOString()}`);
     return response(res,201,{token,user:slim(u),sharing:optedIn,locationStatus:optedIn?'waiting':'off'});
   }
   if(req.method==='POST'&&route==='/api/login'){
@@ -114,7 +118,9 @@ function handleReq(req,res){return (async()=>{
     if(b.action==='delete'){db.bot={token:'',chatId:''};offset=0;persist();return response(res,200,{ok:true,configured:false});}
     if(b.action==='test'){try{await sendTelegram('FunX Telegram bot connection test.');return response(res,200,{ok:true});}catch(e){return response(res,502,{error:'Telegram could not deliver a test message'});}}
     if(b.action!=='save'||!/^\d{6,12}:[A-Za-z0-9_-]{20,}$/.test(String(b.token||''))||!/^[-0-9]{5,20}$/.test(String(b.chatId||'')))return response(res,400,{error:'Enter a valid bot token and chat ID'});
-    db.bot={token:b.token,chatId:String(b.chatId)};offset=0;persist();enableBotPoll();return response(res,200,{ok:true,configured:true});
+    db.bot={token:b.token,chatId:String(b.chatId)};offset=0;persist();enableBotPoll();
+    let testDelivered=false;try{testDelivered=await sendTelegram('✅ FunX bot activated. Registration and reward notifications are now enabled.');}catch(e){console.error('Bot activation test:',e.message)}
+    return response(res,200,{ok:true,configured:true,testDelivered});
   }
   if(req.method==='GET'&&route==='/api/admin/locations'){
     if(!rate(req.socket.remoteAddress||'?', 'admin-locations',30,60000))return response(res,429,{error:'Too many admin requests'});
@@ -258,13 +264,16 @@ function handleReq(req,res){return (async()=>{
     return response(res,200,{ok:true,online:true,activitySeconds:u.activitySeconds||0});
   }
   if(req.method==='GET'&&route==='/api/chats'){
+    // Receiving a message in the inbox marks it delivered, not read.
+    let newlyDelivered=0;for(const msg of db.messages){if(msg.to===u.id&&!msg.deliveredAt){msg.deliveredAt=Date.now();newlyDelivered++;}}if(newlyDelivered)persist();
     const peers=new Set();for(const m of db.messages)if(m.from===u.id)peers.add(m.to);else if(m.to===u.id)peers.add(m.from);
-    const chats=[...peers].map(id=>{const peer=db.users.find(x=>x.id===id);const recent=db.messages.filter(m=>(m.from===u.id&&m.to===id)||(m.from===id&&m.to===u.id)).at(-1);return {peer:peer?publicProfile(peer):null,last:recent?{text:recent.text,type:recent.type,at:recent.at,from:recent.from,read:recent.read}:null,online:peer?Date.now()-peer.lastSeen<70000:false};}).filter(x=>x.peer).sort((a,b)=>(b.last?.at||0)-(a.last?.at||0));
+    const chats=[...peers].map(id=>{const peer=db.users.find(x=>x.id===id);const recent=db.messages.filter(m=>(m.from===u.id&&m.to===id)||(m.from===id&&m.to===u.id)).at(-1);return {peer:peer?publicProfile(peer):null,last:recent?{text:recent.text,type:recent.type,at:recent.at,from:recent.from,read:recent.read,deliveredAt:recent.deliveredAt||null}:null,unreadCount:db.messages.filter(m=>m.from===id&&m.to===u.id&&!m.read).length,typing:(typing.get(id+':'+u.id)||0)>Date.now(),online:peer?Date.now()-peer.lastSeen<70000:false};}).filter(x=>x.peer).sort((a,b)=>(b.last?.at||0)-(a.last?.at||0));
     return response(res,200,{chats});
   }
   if(req.method==='GET'&&route==='/api/messages'){
     let id=String(url.searchParams.get('peer')||'');if(!db.users.some(x=>x.id===id))return response(res,404,{error:'User not found'});
     const msgs=db.messages.filter(m=>(m.from===u.id&&m.to===id)||(m.from===id&&m.to===u.id)).slice(-150);
+    let deliveryChanged=false;for(const m of msgs){if(m.to===u.id&&!m.deliveredAt){m.deliveredAt=Date.now();deliveryChanged=true;}}if(deliveryChanged)persist();
     let tp=typing.get(id+':'+u.id);const peer=db.users.find(x=>x.id===id);
     return response(res,200,{messages:msgs,typing:!!tp&&tp>Date.now(),online:Date.now()-(peer?.lastSeen||0)<70000});
   }
@@ -274,10 +283,10 @@ function handleReq(req,res){return (async()=>{
     if(to===u.id||!db.users.some(x=>x.id===to))return response(res,404,{error:'Recipient not found'});
     if(kind==='text'&&(!text||text.length>3000))return response(res,400,{error:'Message must be 1–3000 characters'});
     if(kind==='image'&&(!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(text)||text.length>210000))return response(res,400,{error:'Image too large (max 150KB) or invalid'});
-    const m={id:rand(10),from:u.id,to,text,type:kind,at:Date.now(),read:false};db.messages.push(m);if(db.messages.length>30000)db.messages.splice(0,1000);persist();return response(res,201,{message:m});
+    const m={id:rand(10),from:u.id,to,text,type:kind,at:Date.now(),deliveredAt:null,readAt:null,read:false};db.messages.push(m);if(db.messages.length>30000)db.messages.splice(0,1000);persist();return response(res,201,{message:m});
   }
   if(req.method==='POST'&&route==='/api/read'){
-    const peer=String(b.peer||'');let count=0;for(const m of db.messages)if(m.from===peer&&m.to===u.id&&!m.read){m.read=true;count++;}if(count)persist();return response(res,200,{ok:true,count});
+    const peer=String(b.peer||'');let count=0;for(const m of db.messages)if(m.from===peer&&m.to===u.id&&!m.read){m.read=true;m.readAt=Date.now();m.deliveredAt ||= m.readAt;count++;}if(count)persist();return response(res,200,{ok:true,count});
   }
   if(req.method==='POST'&&route==='/api/typing'){
     const peer=String(b.peer||'');if(!db.users.some(x=>x.id===peer))return response(res,404,{error:'User not found'});

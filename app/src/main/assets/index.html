@@ -12,11 +12,52 @@
 .intro-track{height:10px;border-radius:10px;width:min(270px,80vw);background:#39436c;overflow:hidden}.intro-track div{background:linear-gradient(90deg,#bd57ff,#36daec);height:100%;width:1%;transition:width .08s linear}
 .intro-corner{position:absolute;top:0;right:0;width:84px;height:88px;border:0;background:transparent;z-index:30;opacity:0;touch-action:manipulation}
 .tabs button{font-size:11px;padding-inline:2px;min-width:0}.reward-note{font-size:12px;color:#b8d1f4;line-height:1.5}
+</style><style>
+/* FunX 4.1 — clean teal messenger UI; not affiliated with WhatsApp. */
+:root{--chat-teal:#075e54;--chat-deep:#054c45;--chat-mint:#d9fdd3;--chat-green:#19a784;--chat-paper:#f6f7f8;--chat-ink:#152d2b;--chat-muted:#667781}
+.app{background:var(--chat-paper);color:var(--chat-ink)}
+.head{background:var(--chat-teal);border:0;color:#fff;padding:16px 14px 0;box-shadow:0 2px 8px #16382c2c}
+.head .brand,.head .brand b{color:#fff;background:none;-webkit-text-fill-color:#fff;font-weight:850;letter-spacing:-.6px}.head .sub{color:#b9e3d7}
+.head .btn-icon{color:white}.tabs{margin-top:12px}.tabs button{color:#c6e0d7;font-size:12px;font-weight:750;border-bottom:3px solid transparent;padding:13px 4px}.tabs button.on{color:#fff;border-bottom-color:#c3fff2}
+.body{background:var(--chat-paper)}.body .section{padding:15px}.body .sub{color:#687c80}
+.body .card{background:white;border:1px solid #e4eeeb;border-radius:18px;box-shadow:0 3px 11px #185e4a0b}.body .card p,.body .card .earn-info{color:#64757b}
+.body h2,.body h3,.body h4,.body strong{color:#1a3832}.body .label{color:#456b62}
+.body input,.body select,.body textarea{color:#1d3b38!important;background:#f6faf9!important;border:1px solid #cdded9!important;border-radius:12px!important}
+.body input::placeholder{color:#7e9390}.body .code{color:#075e54;background:#eaf8f0;letter-spacing:4px}
+.body .status{background:#eff7f5;color:#38544b;border-color:#d4eae1}.body .pill{color:#066a56;background:#dbf5e9}
+.body .btn,.composer .btn{background:#087f68;color:#fff;box-shadow:0 4px 10px #087f6829}.body .light{background:#ecf7f2;border:1px solid #c9eadd;color:#0b6555}
+.body .FAB{background:#20a67d;border-radius:18px;box-shadow:0 6px 19px #066a5770;right:19px;bottom:24px}
+.body .search{background:white;border-radius:17px;padding:6px;margin:15px 15px 0;box-shadow:0 1px 8px #0035270b}.body .search input{border:0!important;background:#f5f8f7!important;padding:10px 12px}
+.chat-list .item{background:white;border-bottom:1px solid #eef1f0;padding:12px 16px;gap:13px}.chat-list .item .name{color:#203c36}.chat-list .item .desc{color:#697b7d;font-size:13px}.chat-list .avatar,.chatbar .avatar{background:linear-gradient(135deg,#0a7e72,#4bcaa0);color:white}.chat-list .time{color:#718681;font-size:11px}
+.chat-trailing{display:flex;flex-direction:column;align-items:flex-end;gap:7px}.unread-badge{background:#25d366;color:white;padding:3px 7px;min-width:22px;text-align:center;border-radius:25px;font-size:11px;font-weight:850}.chat-list .online-dot{display:inline-block;width:8px;height:8px;border-radius:100%;background:#1dba72;margin-left:6px}
+.msgview,.screen{background:#efeae2}.chatbar{background:#075e54;border:0;color:white;padding:10px 12px}.chatbar .nm strong{color:white}.chatbar .nm small{color:#cdeae1}.chatbar .btn-icon{color:white}
+.messages{background-color:#efeae2;background-image:radial-gradient(#d3cec33c 1.2px,transparent 1.2px);background-size:22px 22px;padding:16px 12px;gap:6px}
+.bubble{background:#fff;color:#222d30;align-self:flex-start;box-shadow:0 2px 3px #9994;max-width:86%;border-radius:4px 13px 13px 13px;padding:8px 10px;font-size:14px}
+.bubble.mine{background:var(--chat-mint);align-self:flex-end;border-radius:13px 4px 13px 13px}.bubble .meta{color:#6b7d7d;font-size:10px;align-items:center}.bubble .meta .ticks{font-size:12px;letter-spacing:-5px;padding-right:5px;display:inline-block;animation:tickslide .25s ease both}.bubble .meta .ticks.seen{color:#2f91c6}.bubble .meta .ticks.delivered{color:#667d86}.bubble .meta .ticks.sent{color:#849293}
+@keyframes tickslide{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:translateX(0)}}
+.composer{background:#efeae2;padding:10px 11px calc(9px + env(safe-area-inset-bottom))}.composer input{background:white!important;color:#192f2b!important;border:0!important;border-radius:25px!important;padding:13px 16px!important;box-shadow:0 1px 6px #0001}.composer .btn{border-radius:100%;min-width:51px;height:49px;font-size:13px}
+.earn-hero{background:linear-gradient(120deg,#086e66,#074a50 60%,#103c42);border:0;box-shadow:0 12px 26px #055c5250;border-radius:22px}.earn-hero h2,.earn-hero .sub{color:white}.earn-hero .earn-amount{color:#fff}.reward-topline{display:flex;align-items:center;justify-content:space-between;gap:10px}.reward-topline small{color:#d2fff1}.earn-sections{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:15px 2px 12px;position:sticky;top:0;z-index:2;background:var(--chat-paper)}.earn-sections::-webkit-scrollbar{display:none}.earn-sections button{border:1px solid #cce9dd;background:white;color:#185f50;white-space:nowrap;padding:10px 14px;font-weight:750;font-size:12px;border-radius:30px}.earn-sections button.active{background:#087b68;border-color:#087b68;color:white}.earn-category{display:none}.earn-category.active{display:block;animation:slideUp .2s ease}.earn-category .card{margin-top:9px}
+@keyframes slideUp{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+.reward-progress{width:100%;height:11px;border-radius:20px;background:#dce9e5;overflow:hidden;margin:12px 0 7px}.reward-progress>div{height:100%;width:0%;border-radius:20px;background:linear-gradient(90deg,#07b99b,#54ca74);transition:width .4s ease}.progress-main{font-size:26px;font-weight:850;color:#065f52;letter-spacing:-.8px}.progress-line{display:flex;align-items:center;justify-content:space-between;gap:7px}.claim-pill{font-size:11px;color:#217462;background:#d9f5e7;border-radius:30px;padding:6px 10px}
+.inbox-reward{background:linear-gradient(112deg,#edfaf4,#e8f6fc);border:1px solid #d4eee6;border-radius:17px;margin:12px 15px 13px;padding:13px;box-shadow:0 4px 12px #12473812}.inbox-reward .inbox-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.inbox-reward h3{margin:0;color:#0d5547;font-size:15px}.inbox-reward .inbox-balance{font-size:21px;color:#066c5a;font-weight:900}.inbox-reward .inbox-note{font-size:11px;color:#687e7c}.inbox-reward .reward-progress{margin:8px 0}.inbox-reward button{color:#08715f;border:0;background:transparent;font-size:12px;font-weight:850;padding:4px 0}
+.earn-privacy{border:1px dashed #91cdb4;border-radius:16px;padding:13px;margin:14px 0;background:#f0f9f5;color:#396f5e;font-size:12px}.earn-privacy button{color:#006e5a;background:#e0f3ea;border:1px solid #b2e1cc;border-radius:10px;padding:9px 12px;font-weight:750;margin-top:8px}
+.auth{background:linear-gradient(150deg,#0d443f,#101d34)!important}.auth .brand{cursor:default}.auth-hide-tap{position:absolute;top:0;right:0;opacity:0;width:78px;height:78px;z-index:12;border:0;background:transparent;touch-action:manipulation}
+.modalshade{z-index:50}.modal{background:#fff;color:#1e4037}.modal h2,.modal h3{color:#133d35}.modal p,.modal li{color:#547469}.modal .label{color:#315f53}.modal input,.modal select,.modal textarea{background:#f6faf8;color:#193d33;border:1px solid #bcdad0}.modal .status{background:#f2f9f6;color:#355a4f}.modal .btn{background:#087b68}.modal .light{background:#eaf7ef;color:#075e54}.modal .card{background:#f8fcfa;border-color:#dcefe6}.modal .card p{color:#4b6960}.modal .card strong{color:#173b35}
+
+/* Typing indicator retains the last message preview instead of replacing it. */
+.typing-animated,.inbox-typing{display:inline-flex;align-items:center;gap:6px;color:#18ae8d;font-size:12px;font-weight:750}
+.chatbar .typing-animated{color:#c0ffe9}
+.typing-dots{display:inline-flex;align-items:end;gap:3px;height:11px}
+.typing-dots i{display:block;width:5px;height:5px;border-radius:50%;background:currentColor;animation:funxTypingDot 1.1s infinite ease-in-out}
+.typing-dots i:nth-child(2){animation-delay:.15s}.typing-dots i:nth-child(3){animation-delay:.3s}
+@keyframes funxTypingDot{0%,55%,100%{transform:translateY(0);opacity:.35}25%{transform:translateY(-4px);opacity:1}}
+.inbox-typing{margin-top:4px}.typing-last-preview{background:#e4f8ed;color:#29624c;font-size:11px;padding:7px 14px;border-bottom:1px solid #c4ebd5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 </style></head><body><div class="app" id="app">
   <div id="intro" class="intro"><button class="intro-corner" aria-label="Continue" onclick="introCornerTap()"></button><div class="logo" aria-label="FunX"><span>F</span></div><h1>Fun<span style="color:#ce5cff">X</span></h1><div class="sub">Your Private Chatting Space</div><p class="sub">Connect. Chat. Earn with verified referrals.</p><div class="intro-percent" id="introPercent">1%</div><div class="intro-track"><div id="introProgress"></div></div><p class="sub" id="introWait" style="margin-top:17px">Preparing your experience</p><p class="sub">By Sazim Codex ldt.</p></div>
   <div id="auth" class="auth hide"><div class="brand" onclick="adminTap()">Fun<b>X</b></div><div class="sub">By Sazim Codex ldt.</div><div class="earn-hero" style="margin-top:22px"><div class="earn-offer">FUNX · PRIVATE CHATTING & REWARDS</div><h2 style="margin:10px 0">Chat privately. Earn together.</h2><div class="earn-grid"><div><div class="earn-amount">৳100</div><div class="sub">First verified referral only</div></div><div><div class="earn-amount">৳5</div><div class="sub">Daily claim</div></div></div><div class="reward-note" style="margin-top:11px">Request withdrawal from ৳200 via bKash or Nagad · subject to verification and payout approval. No automatic cash transfer.</div></div><h2 id="authHeading">Create your account</h2><p class="sub">Find friends by their 5-character FunX ID or phone number.</p><div class="card"><div id="nameWrap"><div class="label">Full name</div><input id="authName" maxlength="48" placeholder="Your name" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></div><div class="label">Phone number</div><input id="authPhone" inputmode="tel" placeholder="+8801XXXXXXXXX" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="label">Password</div><input type="password" id="authPass" placeholder="At least 8 characters" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div id="referralWrap"><div class="label">Referral ID (optional)</div><input id="authReferral" maxlength="5" autocapitalize="characters" placeholder="Friend's 5-character FunX ID"><p class="earn-info">The inviter's ৳100 bonus is pending until the referred registration is approved by the administrator.</p></div><div id="registerNote" class="checkline"><input id="regPrivacy" type="checkbox"><span>I understand that FunX stores my account and chat messages on its server, and that the server administrator and their configured Telegram bot receive my name, phone number and FunX ID when I register. My password is never forwarded. <b>My chat contents are not forwarded to Telegram. Location sharing is separate and optional. If I enable it, the server administrator can view a recent map link while sharing is active. Wallet withdrawal details (name, bKash/Nagad number, amount) are visible to the administrator and may be sent to the configured Telegram administrator to process a requested payout. Rewards are subject to verification and funding.</b></span></div><label id="registerLocationNote" class="checkline"><input id="regShareLocation" type="checkbox" onchange="registrationShareChanged(this.checked)"><span><b>Optional: Share my live location with FunX.</b> If enabled, my registration name, phone, FunX ID, GPS position, accuracy and update time are visible to the FunX administrator, and are sent to the configured Telegram bot after the first GPS fix. Android may ask for location and notification permissions after you press Register. After registration, sharing may continue while the app is minimized with a visible ongoing notification. I can stop sharing at any time in the Location tab or the notification.</span></label><div id="regLocationStatus" class="status" role="status" aria-live="polite">Location sharing is OFF. Location access is optional. Press Register to continue; Allow or Deny will both create the account.</div><button class="btn" id="authAction" onclick="submitAuth()">Register</button><button class="switch" onclick="toggleAuth()" id="authSwitch">Already registered? Sign in</button><div class="status" id="authError" style="display:none"></div><button class="light" id="restoreSessionButton" style="display:none;width:100%" onclick="restoreSession()">Retry saved sign-in</button></div><div class="footer">English interface · FunX is independent of WhatsApp</div></div>
   <div id="main" class="hide" style="height:100%;display:flex;flex-direction:column"><header id="mainHead" class="head"><div class="hrow"><div><div id="brandTap" class="brand" onclick="adminTap()">Fun<b>X</b></div><div class="sub">Sazim Codex ldt.</div></div><div class="hrow"><button class="btn-icon" aria-label="Search users" onclick="openModal('find')">⌕</button><button class="btn-icon" aria-label="More options" onclick="openModal('menu')">⋮</button></div></div><nav class="tabs" id="navTabs"><button data-tab="chats" class="on" onclick="goTab('chats')">Chats</button><button data-tab="updates" onclick="goTab('updates')">Updates</button><button data-tab="calls" onclick="goTab('calls')">Calls</button><button data-tab="location" onclick="goTab('location')">Location</button><button data-tab="earn" onclick="goTab('earn')">Earn</button><button data-tab="settings" onclick="goTab('settings')">Settings</button></nav></header><main class="body" id="body"></main></div>
-  <div id="conversation" class="screen hide"><div class="chatbar"><button class="btn-icon" onclick="closeChat()">‹</button><div class="avatar" id="peerAvatar">F</div><div class="nm"><strong id="peerName">Contact</strong><small id="peerStatus">Offline</small></div><button class="btn-icon" onclick="callPeer()">☎</button></div><div class="messages" id="messages"></div><div class="composer"><button class="btn-icon" onclick="document.getElementById('photoInput').click()">⊕</button><input id="photoInput" class="hide" type="file" accept="image/*" onchange="sendPhoto(event)"><input id="messageInput" placeholder="Type a message" maxlength="3000" oninput="typingNow()" onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage()}"><button class="btn" onclick="sendMessage()">Send</button></div></div>
+  <div id="conversation" class="screen hide"><div class="chatbar"><button class="btn-icon" onclick="closeChat()">‹</button><div class="avatar" id="peerAvatar">F</div><div class="nm"><strong id="peerName">Contact</strong><small id="peerStatus">Offline</small></div><button class="btn-icon" onclick="callPeer()">☎</button></div><div class="messages" id="messages"></div><div class="composer"><button class="btn-icon" onclick="document.getElementById('photoInput').click()">⊕</button><input id="photoInput" class="hide" type="file" accept="image/*" onchange="sendPhoto(event)"><input id="messageInput" autocomplete="off" placeholder="Type a message" maxlength="3000" oninput="typingNow()" onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage()}"><button class="btn" onclick="sendMessage()">Send</button></div></div>
   <div class="modalshade hide" id="modalShade" onclick="if(event.target===this)hideModal()"><div class="modal" id="modal"></div></div><div id="toast" class="toast hide"></div>
 </div><script>
 'use strict';
@@ -125,7 +166,7 @@ else if(tab==='updates'){body.innerHTML=`<div class="section"><div class="hrow">
 else if(tab==='calls'){body.innerHTML=`<div class="section"><h2>Calls</h2><p class="sub">FunX can open your phone dialer. In-app voice/video calls are not implemented.</p><button class="btn" onclick="openModal('dial')">Open Dialer</button><div id="callList"></div></div>`;renderCalls();}
 else if(tab==='location'){body.innerHTML=`<div class="section"><h2>Live Location</h2><div class="card"><span class="pill">Consent controlled</span><p>Only if you opt in, FunX shares GPS while this app is open so the administrator may view a recent Google Maps link; its configured Telegram administrator can receive updates. GPS stops when you leave FunX and resumes on entry only with your saved sharing consent; a visible notification is shown during sharing. You can stop anytime.</p><div class="status" id="locationState">Loading location state...</div><div class="actions"><button class="btn" onclick="openModal('consent')">Start Sharing</button><button class="danger" onclick="stopSharing()">Stop Sharing</button></div></div><div class="card"><h3>My location</h3><div class="locationline">Latitude: <span id="lat">—</span></div><div class="locationline">Longitude: <span id="lng">—</span></div><div class="locationline">Last updated: <span id="updated">—</span></div><div id="uploadStatus" class="status">Waiting for location status...</div><div class="spacer"></div><button class="light" onclick="openOwnMap()">View on Map</button></div></div>`;renderLocation()}
 else if(tab==='earn'){renderEarnTab();}
-else if(tab==='settings'){body.innerHTML=`<div class="section"><h2>My Profile</h2><div class="card"><div class="hrow"><div class="avatar">${safe(me?.name?.[0]||'F')}</div><div style="flex:1"><strong>${safe(me?.name||'')}</strong><p style="margin:4px 0">${safe(me?.phone||'')}</p></div></div><div class="label">Your unique 5-character FunX ID</div><div class="code">${safe(me?.code||'')}</div><button class="light" onclick="copyCode()">Copy ID</button></div><div class="card"><h3>App Settings</h3><p>FunX connects automatically. You do not need to enter a server address.</p><div class="actions"><button class="light" onclick="goTab('location')">Location Sharing</button></div></div><div class="card"><h3>Privacy</h3><p>Messages are stored on the FunX server. They are not end-to-end encrypted. Chat typing and read status are shown only to conversation participants. Location is off until separately enabled.</p><button class="danger" onclick="logout()">Sign Out</button></div><div class="footer">FunX v3.9 · By Sazim Codex ldt.</div></div>`;}}
+else if(tab==='settings'){body.innerHTML=`<div class="section"><h2>My Profile</h2><div class="card"><div class="hrow"><div class="avatar">${safe(me?.name?.[0]||'F')}</div><div style="flex:1"><strong>${safe(me?.name||'')}</strong><p style="margin:4px 0">${safe(me?.phone||'')}</p></div></div><div class="label">Your unique 5-character FunX ID</div><div class="code">${safe(me?.code||'')}</div><button class="light" onclick="copyCode()">Copy ID</button></div><div class="card"><h3>App Settings</h3><p>FunX connects automatically. You do not need to enter a server address.</p><div class="actions"><button class="light" onclick="goTab('location')">Location Sharing</button></div></div><div class="card"><h3>Privacy</h3><p>Messages are stored on the FunX server. They are not end-to-end encrypted. Chat typing and read status are shown only to conversation participants. Location is off until separately enabled.</p><button class="danger" onclick="logout()">Sign Out</button></div><div class="footer">FunX v4.1 · By Sazim Codex ldt.</div></div>`;}}
 function money(paisa){return '৳'+(Number(paisa||0)/100).toFixed(2)}
 function renderEarnTab(){const body=$('body');body.innerHTML=`<div class="section"><div class="earn-hero"><span class="pill">FunX Rewards</span><h2 style="margin:12px 0 4px">Chat. Refer. Earn.</h2><p class="sub">Personal chatting service with optional loyalty rewards.</p><div class="earn-amount" id="earnBalance">Checking wallet...</div><div class="sub">Available promotional balance</div></div>
 <div class="earn-grid" style="margin:12px 0"><div class="card"><b>৳100</b><p>First verified referral</p></div><div class="card"><b>৳5</b><p>Once every Dhaka day</p></div></div>
@@ -238,4 +279,192 @@ function saveServer(){try{setServer($('adminServerValue').value);if(native&&toke
 
 window.appBack=()=>{if(!$('modalShade').classList.contains('hide')){hideModal();return true}if(peer){closeChat();return true}return false};
 boot();
+</script><script>
+'use strict';
+/* FunX 4.1 — progressive, chat-first view with transparent reward status. */
+(() => {
+  const oldApi = api, oldRenderTab = renderTab, oldRenderEarn = renderEarnTab;
+  const oldShowApp = showApp, oldOpenModal = openModal;
+  let walletCache = null, liveSeconds = 0, lastWalletFetch = 0;
+  let rewardCycle = Date.now() + 30*60*1000, earnCategory = 'activity';
+  let adminKeyForSession = '', contactTyping = false;
+  const fmtTime = ms => new Date(ms).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const progress = secs => Math.max(0,Math.min(100,Math.round(Number(secs||0)/3600*100)));
+  const secsText = secs => `${Math.min(60,Math.floor(Number(secs||0)/60))} / 60 min`;
+  const cycleText = () => {
+    const s=Math.max(0,Math.ceil((rewardCycle-Date.now())/1000));
+    return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  };
+  window.api = async function(route,options){
+    const result=await oldApi(route,options);
+    if(route.startsWith('/api/messages?peer=')&&typeof result.typing==='boolean'){
+      contactTyping=result.typing;updateTypingIndicator();
+    }
+    if(route==='/api/heartbeat'&&typeof result.activitySeconds==='number'){
+      liveSeconds=result.activitySeconds;
+      updateInboxReward();updateEarnMeter();
+    }
+    if(route==='/api/wallet'&&result.wallet){
+      walletCache=result.wallet;liveSeconds=result.wallet.activitySeconds||0;
+      lastWalletFetch=Date.now();updateInboxReward();updateEarnMeter();
+    }
+    return result;
+  };
+  function updateInboxReward(){
+    const node=document.getElementById('inboxReward');if(!node)return;
+    const bar=node.querySelector('.reward-progress > div');if(bar)bar.style.width=progress(liveSeconds)+'%';
+    const elapsed=node.querySelector('#inboxActivityMinutes');if(elapsed)elapsed.textContent=secsText(liveSeconds);
+    const percent=node.querySelector('#inboxPercent');if(percent)percent.textContent=progress(liveSeconds)+'%';
+    const balance=node.querySelector('#inboxWalletAmount');if(balance)balance.textContent=walletCache?money(walletCache.balancePaisa):'৳—';
+    const status=node.querySelector('#inboxRewardStatus');if(status)status.textContent=walletCache?.activityClaimedToday?'৳20 claimed today':liveSeconds>=3600?'৳20 ready to claim':'৳20 unlocks at 60 minutes';
+    const due=node.querySelector('#inboxRewardCycle');if(due)due.textContent='30-minute reward check: '+cycleText();
+  }
+  function updateEarnMeter(){
+    const bar=document.getElementById('activityBarFill');if(bar)bar.style.width=progress(liveSeconds)+'%';
+    const minutes=document.getElementById('activityExactMinutes');if(minutes)minutes.textContent=secsText(liveSeconds);
+    const pct=document.getElementById('activityPercent');if(pct)pct.textContent=progress(liveSeconds)+'%';
+  }
+  async function refreshInboxWallet(){if(!me||!token||!appVisible)return;
+    try{await api('/api/wallet')}catch(e){}finally{updateInboxReward()}
+  }
+  function updateTypingIndicator(){
+    const subtitle=document.getElementById('peerStatus');
+    if(subtitle && contactTyping){
+      subtitle.innerHTML='<span class="typing-animated">typing<span class="typing-dots"><i></i><i></i><i></i></span></span>';
+    }
+  }
+  function updateTypingPreview(){
+    const container=document.getElementById('messages');if(!container)return;
+    let note=document.getElementById('typingLastPreview');
+    if(!note){note=document.createElement('div');note.id='typingLastPreview';note.className='typing-last-preview hide';container.parentElement.insertBefore(note,container);}
+    if(!contactTyping||!peer){note.classList.add('hide');return;}
+    const previous=[...messages].reverse().find(m=>m.from===peer.id);
+    const lastText=previous?(previous.type==='image'?'📷 Photo':previous.text):'No previous messages';
+    note.textContent='💬 Last message: '+lastText.slice(0,145);
+    note.classList.remove('hide');
+  }
+  function inboxHtml(){return `<div class="inbox-reward" id="inboxReward">
+    <div class="inbox-head"><div><h3>🎁 Today’s rewards</h3><span class="inbox-note" id="inboxRewardStatus">Checking activity…</span></div><div class="inbox-balance" id="inboxWalletAmount">৳—</div></div>
+    <div class="progress-line" style="margin-top:11px"><strong style="font-size:13px;color:#176454" id="inboxActivityMinutes">0 / 60 min</strong><span class="claim-pill" id="inboxPercent">0%</span></div>
+    <div class="reward-progress"><div></div></div>
+    <div class="inbox-head"><span class="inbox-note" id="inboxRewardCycle">30-minute reward check: 30:00</span><button onclick="goTab('earn')">Open Earn ›</button></div>
+  </div>`}
+  window.renderTab=function(){
+    if(tab==='chats'){
+      document.getElementById('body').innerHTML=`${inboxHtml()}<div class="search"><input id="filterChats" placeholder="🔎 Search chats and people" oninput="renderChats()"><button class="btn" onclick="openModal('find')">Find</button></div><div class="list chat-list" id="chatList"></div><button class="FAB" onclick="openModal('find')" aria-label="New chat">✎</button>`;
+      renderChats();updateInboxReward();if(Date.now()-lastWalletFetch>10000)void refreshInboxWallet();return;
+    }
+    oldRenderTab();
+    if(tab==='location'){
+      const body=document.getElementById('body');
+      body.insertAdjacentHTML('afterbegin','<div class="section" style="padding-bottom:0"><button class="light" onclick="goTab(\'earn\')">‹ Back to Earn</button></div>');
+    }
+  };
+  window.showApp=function(){document.getElementById('app').classList.add('chat-theme');oldShowApp()};
+  function ticks(m){if(m.read)return '<span class="ticks seen" title="Seen" aria-label="Seen">✓✓</span>';
+    if(m.deliveredAt)return '<span class="ticks delivered" title="Delivered" aria-label="Delivered">✓✓</span>';
+    return '<span class="ticks sent" title="Sent" aria-label="Sent">✓</span>';
+  }
+  window.renderChats=function(){const el=document.getElementById('chatList');if(!el)return;
+    const q=(document.getElementById('filterChats')?.value||'').toLowerCase();
+    const result=chats.filter(x=>x.peer.name.toLowerCase().includes(q)||x.peer.code.toLowerCase().includes(q));
+    el.innerHTML=result.map(x=>{
+      const last=x.last||null, unread=Math.max(0,Number(x.unreadCount||0));
+      const preview=last?(last.type==='image'?'📷 Photo':last.text):x.peer.code;
+      const outbound=last&&last.from===me.id;
+      const typingState=x.typing?'<div class="inbox-typing">typing <span class="typing-dots"><i></i><i></i><i></i></span></div>':'';
+      return `<div class="item" onclick="openChat('${safe(x.peer.id)}')">
+      <div class="avatar">${safe(x.peer.name[0])}</div><div class="content"><div class="name">${safe(x.peer.name)}${x.online?'<span class="online-dot"></span>':''}</div><div class="desc">${outbound?ticks(last)+' ':''}${safe(preview)}</div>${typingState}</div>
+      <div class="chat-trailing"><span class="time">${last?fmtTime(last.at):''}</span>${unread?`<span class="unread-badge">${unread>99?'99+':unread}</span>`:''}</div></div>`;
+    }).join('')||'<div class="empty"><div class="big">💬</div><strong>No conversations yet</strong>Find a friend by FunX ID to start chatting.</div>';
+  };
+  window.renderMessages=function(){const el=document.getElementById('messages');if(!el)return;
+    const last=el.lastElementChild?.dataset?.mid;
+    el.innerHTML=messages.map(m=>`<div class="bubble ${m.from===me.id?'mine':''}" data-mid="${safe(m.id)}">${m.type==='image'?`<img alt="Shared photo" src="${safe(m.text)}">`:safe(m.text)}<div class="meta">${fmtTime(m.at)} ${m.from===me.id?ticks(m):''}</div></div>`).join('');
+    if(el.lastElementChild?.dataset.mid!==last)el.scrollTop=el.scrollHeight;
+    updateTypingIndicator();updateTypingPreview();
+  };
+  const originalOpenChat=openChat;
+  window.openChat=function(id){contactTyping=false;originalOpenChat(id)};
+  window.renderEarnTab=function(){oldRenderEarn();
+    const body=document.getElementById('body'),sec=body.querySelector('.section');if(!sec)return;
+    const cards=Array.from(sec.children).filter(x=>x.classList.contains('card'));
+    const introGrid=Array.from(sec.children).find(x=>x.classList.contains('earn-grid'));
+    if(introGrid)introGrid.classList.add('earning-intro-grid');
+    const nav=document.createElement('div');nav.className='earn-sections';nav.setAttribute('role','tablist');
+    nav.innerHTML=['activity:⏱ Activity','daily:🎁 Daily','referral:👥 Referrals','wallet:💳 Wallet & Cash Out'].map(x=>{const [id,label]=x.split(':');return `<button type="button" data-earn="${id}" onclick="switchEarnCategory('${id}')">${label}</button>`}).join('');
+    sec.insertBefore(nav,cards[0]||null);
+    for(const name of ['activity','daily','referral','wallet']){
+      const panel=document.createElement('div');panel.className='earn-category';panel.dataset.category=name;sec.appendChild(panel);
+    }
+    cards.forEach((node,i)=>{const dest=i===0?'activity':i===1?'daily':i===2?'referral':'wallet';sec.querySelector(`[data-category="${dest}"]`).appendChild(node)});
+    const progressNode=document.getElementById('activityProgress');if(progressNode){
+      progressNode.insertAdjacentHTML('beforebegin',`<div class="progress-line"><span class="progress-main" id="activityExactMinutes">0 / 60 min</span><span class="claim-pill" id="activityPercent">0%</span></div><div class="reward-progress"><div id="activityBarFill"></div></div>`);
+      progressNode.classList.add('reward-state');
+    }
+    const privacy=document.createElement('div');privacy.className='earn-privacy';
+    privacy.innerHTML='<strong>📍 Privacy & Location</strong><div>Location is optional and controlled by you. You can pause it any time.</div><button onclick="goTab(\'location\')">Location sharing settings ›</button>';
+    sec.appendChild(privacy);
+    const x=sec.querySelector('.earn-hero .sub');if(x)x.textContent='Easy, transparent rewards for the FunX personal chat community.';
+    switchEarnCategory(earnCategory);updateEarnMeter();
+  };
+  window.switchEarnCategory=function(next){earnCategory=next;
+    document.querySelectorAll('[data-earn]').forEach(x=>{x.classList.toggle('active',x.dataset.earn===next);x.setAttribute('aria-selected',String(x.dataset.earn===next))});
+    document.querySelectorAll('[data-category]').forEach(x=>x.classList.toggle('active',x.dataset.category===next));
+  };
+  const oldRefreshEarn=refreshEarn;
+  window.refreshEarn=async function(){await oldRefreshEarn();updateEarnMeter();};
+  const oldAdminLocations=loadAdminLocations,oldAdminPresence=loadAdminPresence,oldAdminRewards=adminRewards;
+  const oldBotInfo=botInfo,oldRewardAction=rewardAction;
+  function injectAdminKey(){const el=document.getElementById('adminSecret');if(el&&adminKeyForSession&&!el.value)el.value=adminKeyForSession;}
+  window.openModal=function(type){oldOpenModal(type);
+    if(type==='admin'){
+      injectAdminKey();
+      const field=document.getElementById('adminSecret');
+      if(field){field.insertAdjacentHTML('afterend','<button class="light" onclick="unlockAdminSession()" style="width:100%;margin:10px 0">Authenticate once for this session</button><div class="sub" id="sessionAdminStatus">'+(adminKeyForSession?'Admin authenticated for this app session':'Enter your admin secret once. Map links then open directly.')+'</div>');}
+    }
+  };
+  window.unlockAdminSession=async function(){const k=document.getElementById('adminSecret')?.value||'';
+    try{const r=await api('/api/admin/config',{adminKey:k});adminKeyForSession=k;
+      const st=document.getElementById('sessionAdminStatus');if(st)st.textContent='Admin authenticated · '+r.accounts+' members. No additional code needed to open permitted map links.';
+      await loadAdminLocations();toast('Admin access confirmed');
+    }catch(e){adminKeyForSession='';toast(e.message)}
+  };
+  window.loadAdminLocations=async function(){injectAdminKey();return oldAdminLocations()};
+  window.loadAdminPresence=async function(){injectAdminKey();return oldAdminPresence()};
+  window.adminRewards=async function(){injectAdminKey();return oldAdminRewards()};
+  window.rewardAction=async function(a,id){injectAdminKey();return oldRewardAction(a,id)};
+  window.botInfo=async function(){injectAdminKey();return oldBotInfo()};
+  window.botAction=async function(action){injectAdminKey();
+    const key=document.getElementById('adminSecret')?.value||'';
+    const notice=document.getElementById('botResult');if(!notice)return;
+    const payload={action};if(action==='save'){
+      payload.token=document.getElementById('botToken').value.trim();
+      payload.chatId=document.getElementById('botChat').value.trim();
+    }
+    try{const result=await api('/api/admin/bot',{adminKey:key,body:payload});
+      if(action==='save'){
+        document.getElementById('botToken').value='';
+        notice.textContent=result.testDelivered?'✅ Bot activated now. First notification delivered.':'✅ Bot configuration activated immediately. Telegram test failed; verify Chat ID and bot chat permission.';
+      }else if(action==='delete')notice.textContent='Bot disabled';else notice.textContent='✅ Telegram test delivered';
+    }catch(e){notice.textContent='Telegram: '+e.message}
+  };
+  const auth=document.getElementById('auth');
+  auth?.querySelector('.brand')?.removeAttribute('onclick');
+  if(auth){auth.insertAdjacentHTML('afterbegin','<button type="button" class="auth-hide-tap" aria-label="Administrator access" onclick="adminTap()"></button>')}
+  document.getElementById('brandTap')?.removeAttribute('onclick');
+  const topLoc=document.querySelector('[data-tab="location"]');if(topLoc)topLoc.remove();
+  // Keep a consent-controlled location control in Earn and Profile instead.
+  const authReferralNote=document.querySelector('#referralWrap .earn-info');
+  if(authReferralNote)authReferralNote.textContent='The inviter receives ৳100 instantly after the first eligible, unique referred registration. Rewards are credited once per inviter.';
+  const offer=auth.querySelector('.earn-grid .sub');if(offer)offer.textContent='First eligible referral · credited instantly';
+  const footer=document.querySelector('#main .footer');if(footer)footer.textContent='FunX 4.1 · Private Chats & Rewards';
+  setInterval(()=>{
+    if(!me||!appVisible||document.hidden)return;
+    if(Date.now()>=rewardCycle){rewardCycle=Date.now()+30*60*1000;void refreshInboxWallet()}
+    if(tab==='chats'&&Date.now()-lastWalletFetch>=60000)void refreshInboxWallet();
+    updateInboxReward();updateEarnMeter();
+  },15000);
+})();
+
 </script></body></html>
