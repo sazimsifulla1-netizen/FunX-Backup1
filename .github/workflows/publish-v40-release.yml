@@ -1,0 +1,40 @@
+name: Publish FunX v4.0 APK Download
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-v40-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve verified FunX v4 APK from successful build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/funx-v4-artifact
+          gh run download 40592399494 -R "$REPO" -n FunX-v4-debug-apk -D /tmp/funx-v4-artifact
+          test -s /tmp/funx-v4-artifact/app-debug.apk
+          cp /tmp/funx-v4-artifact/app-debug.apk /tmp/FunX-v4.0.apk
+          unzip -t /tmp/FunX-v4.0.apk | tail -1
+      - name: Publish direct GitHub APK release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! gh release view v4.0 -R "$REPO" >/dev/null 2>&1; then
+            gh release create v4.0 -R "$REPO" --target main --title "FunX v4.0 Android APK" --notes "Android chat app. Includes referral rewards, activity claims, bKash/Nagad withdrawal forms, visible consent-based location sharing and admin presence. Real payouts require server configuration and manual approval."
+          fi
+          gh release upload v4.0 /tmp/FunX-v4.0.apk -R "$REPO" --clobber
+          gh release view v4.0 -R "$REPO" --json assets --jq '.assets[].name'
