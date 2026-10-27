@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FunX v3.5 Android/Termux setup and test installer. No remote code downloads beyond Termux packages/GitHub tooling.
+# FunX v4.0 Android/Termux setup and test installer. No remote code downloads beyond Termux packages/GitHub tooling.
 set -Eeuo pipefail
 umask 077
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -33,7 +33,7 @@ install_dependencies(){
 
 setup_server(){
   note 'Preparing server; existing accounts, messages and Admin Secret are retained.'
-  (cd "$SERVER" && bash setup-termux.sh && bash test-termux.sh)
+  (cd "$SERVER" && bash setup-termux.sh && bash test-termux.sh && node ../tools/test-registration.js && node ../tools/test-v37.js && node ../tools/test-v38.js && node ../tools/test-v40.js && node ../tools/test-v40-ui.js && node ../tools/test-v40-activity.js && node ../tools/test-server-restart.js)
 }
 local_health(){ curl -fsS --max-time 3 "http://127.0.0.1:${PORT}/health" 2>/dev/null | grep -q '"service":"FunX"'; }
 
@@ -134,9 +134,19 @@ safe_push(){
   git remote get-url origin >/dev/null || fail 'FunX GitHub remote origin is not configured.'
   git config user.name 'sazimsifulla1-netizen'
   git config user.email 'sazimsifulla1-netizen@users.noreply.github.com'
-  git add .github/workflows/build-apk.yml app/src/main/assets/index.html app/src/main/java/com/sazimcodex/funx/MainActivity.java app/build.gradle server/setup-termux.sh tools/ START_FUNX.sh INSTALL_FUNX_BN.md FUNX_V3_6_REGISTRATION_LOCATION_BN.md
+  # Stage only known source files; never stage .env, server/data, signing keys or secrets.
+  local files=(.github/workflows/build-apk.yml app/src/main/assets/index.html
+    app/src/main/java/com/sazimcodex/funx/MainActivity.java
+    app/src/main/java/com/sazimcodex/funx/LiveLocationService.java app/build.gradle
+    server/server.js server/test.js server/setup-termux.sh tools/ START_FUNX.sh
+    INSTALL_FUNX_BN.md FUNX_V3_6_REGISTRATION_LOCATION_BN.md
+    FUNX_V3_7_FIX_BN.md FUNX_V3_8_REGISTRATION_GPS_BN.md
+    FUNX_V3_9_REWARDS_BN.md FUNX_V4_0_FEATURES_BN.md README_BN.md README_FunX40.txt)
+  local present=() f
+  for f in "${files[@]}"; do [[ -e "$f" ]] && present+=("$f"); done
+  git add -- "${present[@]}"
   if ! git diff --cached --quiet; then
-    git commit -m 'FunX v3.6 registration location permission flow'
+    git commit -m 'FunX v4.0 first-referral, active rewards, wallet security and presence'
     git push origin main
   fi
 }
@@ -166,6 +176,7 @@ build_apk(){
   folder="$HOME/storage/downloads/FunX-NEW"
   [[ -d "$HOME/storage/downloads" ]] || fail 'Downloads permission not granted. Run termux-setup-storage and allow access.'
   mkdir -p "$folder"
+  rm -f "$folder/app-debug.apk"
   gh run download "$run_id" -R "$REPO" -n FunX-debug-apk -D "$folder"
   if [[ ! -f "$folder/app-debug.apk" ]]; then
     fail 'APK artifact downloaded but app-debug.apk not found. Check folder: ~/storage/downloads/FunX-NEW'

@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.SystemClock;
 
 import java.util.Locale;
 
@@ -27,6 +28,7 @@ public final class LiveLocationService extends Service implements LocationListen
     private LocationManager manager;
     private boolean gpsListening;
     private boolean networkListening;
+    private boolean attemptedRecentFix;
 
     @Override public void onCreate() {
         super.onCreate();
@@ -104,6 +106,20 @@ public final class LiveLocationService extends Service implements LocationListen
             if (!networkListening && manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000L, 5f, this, Looper.getMainLooper());
                 networkListening = true;
+            }
+            // A fresh cached fix improves first-registration delivery latency; never forward stale coordinates.
+            if (!attemptedRecentFix) {
+                attemptedRecentFix=true;
+                Location recent=null;
+                if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) recent=manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    Location network=manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    if (network!=null&&(recent==null||network.getElapsedRealtimeNanos()>recent.getElapsedRealtimeNanos())) recent=network;
+                }
+                if (recent!=null && recent.getElapsedRealtimeNanos()>0
+                        && SystemClock.elapsedRealtimeNanos()-recent.getElapsedRealtimeNanos()<120000000000L) {
+                    onLocationChanged(recent);
+                }
             }
             if (!gpsListening && !networkListening) updateNotification("Please enable Android location services");
         } catch (SecurityException e) {

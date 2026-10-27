@@ -111,7 +111,15 @@ public final class MainActivity extends Activity {
     }
     @Override protected void onActivityResult(int request,int code,Intent data){super.onActivityResult(request,code,data);
         if(request==PICK_IMAGE&&imageChooser!=null){imageChooser.onReceiveValue(code==RESULT_OK&&data!=null&&data.getData()!=null?new Uri[]{data.getData()}:null);imageChooser=null;}}
-    @Override protected void onResume(){super.onResume();if(prefs().getBoolean("tracking_requested",false)&&hasLocation()&&hasNotifications()&& !SecureSession.load(this).isEmpty())openService();}
+    @Override protected void onResume(){super.onResume();if(browser!=null)browser.evaluateJavascript("window.funxNativeAppVisibility&&window.funxNativeAppVisibility(true)",null);
+        // Restart previously authorized, clearly indicated sharing only while FunX is in foreground.
+        if(prefs().getBoolean("tracking_requested",false)&&prefs().getBoolean("remote_enabled",false)&&hasLocation()&&hasNotifications()&& !SecureSession.load(this).isEmpty())openService();}
+    @Override protected void onPause(){
+        if(browser!=null)browser.evaluateJavascript("window.funxNativeAppVisibility&&window.funxNativeAppVisibility(false)",null);
+        // Stop foreground-session GPS on leaving the app; consent is retained for next entry.
+        stopService(new Intent(this,LiveLocationService.class));
+        super.onPause();
+    }
     @Override public void onBackPressed(){if(browser==null){super.onBackPressed();return;}browser.evaluateJavascript("window.appBack&&window.appBack()", result->{if(!"true".equals(result))MainActivity.super.onBackPressed();});}
     public final class Bridge {
         @JavascriptInterface public String getSavedToken(){return SecureSession.load(MainActivity.this);}
