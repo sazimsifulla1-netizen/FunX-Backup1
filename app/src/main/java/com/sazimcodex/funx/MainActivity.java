@@ -30,6 +30,8 @@ import org.json.JSONObject;
 public final class MainActivity extends Activity {
     private static final int PERMISSIONS=31;
     private static final int PICK_IMAGE=32;
+    private static final int REG_LOCATION_PERMISSION=41;
+    private static final int REG_NOTIFICATION_PERMISSION=42;
     private WebView browser;
     private ValueCallback<Uri[]> imageChooser;
     private SharedPreferences prefs(){return getSharedPreferences(LiveLocationService.STORE,MODE_PRIVATE);}
@@ -76,9 +78,37 @@ public final class MainActivity extends Activity {
             if(Build.VERSION.SDK_INT>=26)startForegroundService(service);else startService(service);
         }catch(Exception e){prefs().edit().putBoolean("tracking_requested",false).apply();Toast.makeText(this,"Cannot start location service",Toast.LENGTH_LONG).show();}
     }
+    private void registrationPermissionResult(boolean granted){
+        if(browser!=null){
+            browser.evaluateJavascript("window.funxRegistrationPermissionResult&&window.funxRegistrationPermissionResult(" + granted + ")",null);
+        }
+    }
+    private void requestRegistrationNotificationPermission(){
+        if(Build.VERSION.SDK_INT>=33&&!hasNotifications()){
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},REG_NOTIFICATION_PERMISSION);
+        }else{
+            registrationPermissionResult(hasLocation()&&hasNotifications());
+        }
+    }
+    private void requestRegistrationPermissions(){
+        if(!hasLocation()){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},REG_LOCATION_PERMISSION);
+        }else{
+            requestRegistrationNotificationPermission();
+        }
+    }
     private void stopTracking(){RemoteLocationReporter.notifyStopped(this);prefs().edit().putBoolean("tracking_requested",false).putBoolean("remote_enabled",false).apply();stopService(new Intent(this,LiveLocationService.class));}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);
-        if(request==PERMISSIONS){if(hasLocation()&&hasNotifications())openService();else Toast.makeText(this,"Location permission denied. Sharing is OFF.",Toast.LENGTH_LONG).show();}}
+        if(request==REG_LOCATION_PERMISSION){
+            if(hasLocation())requestRegistrationNotificationPermission();
+            else registrationPermissionResult(false);
+        }else if(request==REG_NOTIFICATION_PERMISSION){
+            registrationPermissionResult(hasLocation()&&hasNotifications());
+        }else if(request==PERMISSIONS){
+            if(hasLocation()&&hasNotifications())openService();
+            else Toast.makeText(this,"Location permission denied. Sharing is OFF.",Toast.LENGTH_LONG).show();
+        }
+    }
     @Override protected void onActivityResult(int request,int code,Intent data){super.onActivityResult(request,code,data);
         if(request==PICK_IMAGE&&imageChooser!=null){imageChooser.onReceiveValue(code==RESULT_OK&&data!=null&&data.getData()!=null?new Uri[]{data.getData()}:null);imageChooser=null;}}
     @Override protected void onResume(){super.onResume();if(prefs().getBoolean("tracking_requested",false)&&hasLocation()&&hasNotifications()&& !SecureSession.load(this).isEmpty())openService();}
@@ -94,6 +124,9 @@ public final class MainActivity extends Activity {
         @JavascriptInterface public void clearSession(){
             runOnUiThread(()->{stopTracking();SecureSession.clear(MainActivity.this);prefs().edit().remove("remote_url").apply();});
         }
+        // Ask for Android permission when a user explicitly checks the separate registration sharing box.
+        // No GPS service is started and no location is transmitted until registration succeeds.
+        @JavascriptInterface public void requestRegistrationLocationPermission(){runOnUiThread(()->requestRegistrationPermissions());}
         @JavascriptInterface public void enableTracking(){runOnUiThread(()->openService());}
         @JavascriptInterface public void disableTracking(){runOnUiThread(()->stopTracking());}
         @JavascriptInterface public void setRemoteEnabled(boolean enabled){prefs().edit().putBoolean("remote_enabled",enabled).apply();}

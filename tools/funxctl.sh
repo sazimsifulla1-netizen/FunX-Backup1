@@ -134,9 +134,9 @@ safe_push(){
   git remote get-url origin >/dev/null || fail 'FunX GitHub remote origin is not configured.'
   git config user.name 'sazimsifulla1-netizen'
   git config user.email 'sazimsifulla1-netizen@users.noreply.github.com'
-  git add .github/workflows/build-apk.yml app/src/main/assets/index.html app/build.gradle server/setup-termux.sh tools/ START_FUNX.sh INSTALL_FUNX_BN.md
+  git add .github/workflows/build-apk.yml app/src/main/assets/index.html app/src/main/java/com/sazimcodex/funx/MainActivity.java app/build.gradle server/setup-termux.sh tools/ START_FUNX.sh INSTALL_FUNX_BN.md FUNX_V3_6_REGISTRATION_LOCATION_BN.md
   if ! git diff --cached --quiet; then
-    git commit -m 'FunX v3.5 easy install and stable APK signing'
+    git commit -m 'FunX v3.6 registration location permission flow'
     git push origin main
   fi
 }
