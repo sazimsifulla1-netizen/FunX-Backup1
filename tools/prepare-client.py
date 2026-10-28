@@ -8,7 +8,8 @@ from urllib.parse import urlsplit
 for command in (['node','--check','server/server.js'],
                 ['node','server/test.js'],
                 ['node','tools/test-v41.js'],
-                ['node','tools/test-v42.js']):
+                ['node','tools/test-v42.js'],
+                ['node','tools/test-v421.js']):
     subprocess.run(command,check=True)
 
 url=(os.getenv('FUNX_SERVER_URL') or '').strip().rstrip('/')

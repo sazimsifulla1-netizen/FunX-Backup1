@@ -5,7 +5,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('app/src/main/assets/index.html','utf8');
 const server=fs.readFileSync('server/server.js','utf8');
 const gradle=fs.readFileSync('app/build.gradle','utf8');
-assert.match(gradle,/versionName '4\.2\.0'/);
+assert.match(gradle,/versionName '4\.2\.1'/);
 assert.ok(html.includes('/* FunX 4.1 — progressive'));
 assert.ok(html.includes('/* Typing indicator retains'));
 for (const marker of [

@@ -37,6 +37,13 @@ function ok(cond,msg){assert.ok(cond,msg);completed++;}
   ok(!('phone' in loc)&&!('password' in loc),'no phone or password in location list');
   let confbad=await api('/api/admin/config',{adminKey:'wrong'});ok(confbad.status===403,'admin protected');
   let conf=await api('/api/admin/config',{adminKey:secret});ok(conf.status===200&&conf.body.sharing===1,'admin location count');
+  let blockedDashboard=await api('/api/admin/dashboard');
+  ok(blockedDashboard.status===403,'anonymous admin dashboard forbidden');
+  let adminDashboard=await api('/api/admin/dashboard',{adminKey:secret});
+  ok(adminDashboard.status===200&&adminDashboard.body.stats.accounts===2,'admin overview member count');
+  ok(adminDashboard.body.stats.recentGps===1,'dashboard counts only fresh consented GPS');
+  ok(adminDashboard.body.recentMembers.some(x=>x.code===alice.code&&x.liveLocation?.mapsUrl==='https://maps.google.com/?q=23.700000,90.400000'),'admin dashboard displays permitted map');
+  ok(!('token' in adminDashboard.body.bot),'admin dashboard never exposes Telegram token');
   let stop=await api('/api/stop',{method:'POST',token:at,data:{}});ok(stop.status===200,'share stopped');
   let conf2=await api('/api/admin/config',{adminKey:secret});ok(conf2.body.sharing===0,'stopped location removed');
   let stoppedLocations=await api('/api/admin/locations',{adminKey:secret});ok(stoppedLocations.body.locations.length===0,'stopped user not visible in admin links');
@@ -44,6 +51,10 @@ function ok(cond,msg){assert.ok(cond,msg);completed++;}
   ok(saveBot.status===200&&saveBot.body.configured,'save bot token');
   let botCheck=await api('/api/admin/config',{adminKey:secret});ok(botCheck.body.configured&&botCheck.body.chatId==='123456789','check saved bot');
   let reset=await api('/api/admin/bot',{method:'POST',adminKey:secret,data:{action:'delete'}});ok(reset.status===200&&!reset.body.configured,'bot config deletion');
+  let botTestWithoutConfig=await api('/api/admin/bot',{method:'POST',adminKey:secret,data:{action:'test'}});
+  ok(botTestWithoutConfig.status===409,'bot test correctly rejects absent configuration');
+  let privateBotStatus=await api('/api/admin/config',{adminKey:secret});
+  ok(privateBotStatus.status===200&&!('token' in privateBotStatus.body),'admin config does not leak bot token');
   let status=await api('/api/statuses',{method:'POST',token:at,data:{text:'Test status'}});ok(status.status===201,'post status');
   let listing=await api('/api/statuses',{token:bt});ok(listing.body.statuses.some(x=>x.text==='Test status'),'read statuses');
   let login=await api('/api/login',{method:'POST',data:{phone:reg.phone,password:reg.password}});ok(login.status===200&&login.body.token!==at,'login');

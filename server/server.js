@@ -16,9 +16,10 @@ if (require.main === module && ADMIN_SECRET.length < 20) {
   console.error('Set a strong FUNX_ADMIN_SECRET (at least 20 characters) in server/.env.'); process.exit(1);
 }
 fs.mkdirSync(DATA_DIR,{recursive:true,mode:0o700});
-let db = {users:[],messages:[],sessions:[],bot:{token:'',chatId:''},locations:{},statuses:[],referrals:[],walletLedger:[],withdrawals:[]};
+let db = {users:[],messages:[],sessions:[],bot:{token:'',chatId:''},botStatus:{},locations:{},statuses:[],referrals:[],walletLedger:[],withdrawals:[]};
 if (fs.existsSync(DB_FILE)) db = {...db,...JSON.parse(fs.readFileSync(DB_FILE,'utf8'))};
 for(const key of ['referrals','walletLedger','withdrawals']) if(!Array.isArray(db[key]))db[key]=[];
+if(!db.botStatus||typeof db.botStatus!=='object'||Array.isArray(db.botStatus))db.botStatus={};
 function persist() { const tmp=DB_FILE+'.tmp';fs.writeFileSync(tmp,JSON.stringify(db),{mode:0o600}); fs.renameSync(tmp,DB_FILE); }
 function rand(n=32) {return crypto.randomBytes(n).toString('hex');}
 function digest(v) {return crypto.createHash('sha256').update(String(v)).digest('hex');}
@@ -36,7 +37,28 @@ function actor(req){const m=/^Bearer ([a-f0-9]{64})$/i.exec(req.headers.authoriz
 function session(u){const token=rand(32);db.sessions.push({uid:u.id,hash:digest(token),expires:Date.now()+90*86400000});persist();return token;}
 function admin(req){return ADMIN_SECRET.length>=20 && equal(req.headers['x-admin-key']||'', ADMIN_SECRET);}
 function formatLoc(loc){return `https://maps.google.com/?q=${loc.latitude.toFixed(6)},${loc.longitude.toFixed(6)}`;}
-async function sendTelegram(message){if(!db.bot.token||!db.bot.chatId)return false;const r=await fetch(`https://api.telegram.org/bot${db.bot.token}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:db.bot.chatId,text:message,disable_web_page_preview:true}),signal:AbortSignal.timeout(12000)});const j=await r.json();if(!r.ok||!j.ok)throw Error('Telegram rejected request');return true;}
+async function sendTelegram(message){
+ if(!db.bot.token||!db.bot.chatId)return false;
+ db.botStatus.lastAttemptAt=Date.now();
+ try{
+  const r=await fetch(`https://api.telegram.org/bot${db.bot.token}/sendMessage`,{
+   method:'POST',headers:{'content-type':'application/json'},
+   body:JSON.stringify({chat_id:db.bot.chatId,text:message,disable_web_page_preview:true}),
+   signal:AbortSignal.timeout(12000)
+  });
+  const j=await r.json();
+  if(!r.ok||!j.ok)throw Error('Telegram rejected request');
+  db.botStatus.lastDeliveredAt=Date.now();
+  db.botStatus.lastError='';
+  persist();
+  return true;
+ }catch(e){
+  db.botStatus.lastError='Delivery failed. Check Chat ID, bot token and whether the bot can message this chat.';
+  db.botStatus.lastFailedAt=Date.now();
+  persist();
+  throw e;
+ }
+}
 async function notify(text){try{await sendTelegram(text);}catch(e){console.error('Telegram notification:',e.message);}}
 let offset=0;
 async function pollBot(){if(!db.bot.token||!db.bot.chatId)return;try{const r=await fetch(`https://api.telegram.org/bot${db.bot.token}/getUpdates`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({offset,timeout:0,allowed_updates:['message']}),signal:AbortSignal.timeout(9000)});const j=await r.json();if(!j.ok)return;for(const update of j.result||[]){offset=Math.max(offset,update.update_id+1);const m=update.message;if(String(m?.chat?.id)!==String(db.bot.chatId))continue;const cmd=String(m.text||'').trim().split(' ')[0].split('@')[0];if(cmd==='/help'||cmd==='/start')await notify('FunX Bot\n/latest — latest active shared locations\n/status — registered and sharing counts\nOnly users who explicitly enabled location sharing appear.');if(cmd==='/status')await notify(`FunX: ${db.users.length} accounts, ${Object.keys(db.locations).length} opted-in shared locations.`);if(cmd==='/latest'){let list=Object.entries(db.locations).filter(([id,l])=>{const u=db.users.find(u=>u.id===id);return u?.shareLocation && Date.now()-l.updated<=LIVE_LOCATION_WINDOW_MS && Date.now()>=l.updated-30000;}).slice(0,15).map(([id,l])=>{const u=db.users.find(u=>u.id===id);return `${u?.code||'Unknown'} · ${u?.name||''}\n${new Date(l.updated).toISOString()}\n${formatLoc(l)}`;});await notify(list.join('\n\n')||'No active shared locations.');}}}catch(e){console.error('Bot poll:',e.message);}}
@@ -163,11 +185,11 @@ function handleReq(req,res){return (async()=>{
   if(req.method==='POST'&&route==='/api/admin/bot'){
     if(!rate(req.socket.remoteAddress||'?', 'admin',10,600000))return response(res,429,{error:'Too many admin attempts'});
     if(!admin(req))return response(res,403,{error:'Invalid server admin secret'});
-    if(b.action==='delete'){db.bot={token:'',chatId:''};offset=0;persist();return response(res,200,{ok:true,configured:false});}
-    if(b.action==='test'){try{await sendTelegram('FunX Telegram bot connection test.');return response(res,200,{ok:true});}catch(e){return response(res,502,{error:'Telegram could not deliver a test message'});}}
+    if(b.action==='delete'){db.bot={token:'',chatId:''};db.botStatus={};offset=0;persist();return response(res,200,{ok:true,configured:false});}
+    if(b.action==='test'){if(!db.bot.token||!db.bot.chatId)return response(res,409,{error:'Configure the bot token and chat ID first'});try{const delivered=await sendTelegram('FunX Telegram bot connection test.');db.botStatus.lastTestAt=Date.now();db.botStatus.testDelivered=delivered;persist();return response(res,200,{ok:true,testDelivered:delivered});}catch(e){db.botStatus.lastTestAt=Date.now();db.botStatus.testDelivered=false;persist();return response(res,502,{error:'Telegram could not deliver a test message'});}}
     if(b.action!=='save'||!/^\d{6,12}:[A-Za-z0-9_-]{20,}$/.test(String(b.token||''))||!/^[-0-9]{5,20}$/.test(String(b.chatId||'')))return response(res,400,{error:'Enter a valid bot token and chat ID'});
-    db.bot={token:b.token,chatId:String(b.chatId)};offset=0;persist();enableBotPoll();
-    let testDelivered=false;try{testDelivered=await sendTelegram('✅ FunX bot activated. Registration and reward notifications are now enabled.');}catch(e){console.error('Bot activation test:',e.message)}
+    db.bot={token:b.token,chatId:String(b.chatId)};db.botStatus={configuredAt:Date.now(),testDelivered:false};offset=0;persist();enableBotPoll();
+    let testDelivered=false;try{testDelivered=await sendTelegram('✅ FunX bot activated. Registration and reward notifications are now enabled.');}catch(e){console.error('Bot activation test failed; check configured Chat ID and bot permissions.')}db.botStatus.testDelivered=testDelivered;db.botStatus.lastTestAt=Date.now();persist();
     return response(res,200,{ok:true,configured:true,testDelivered});
   }
   if(req.method==='GET'&&route==='/api/admin/locations'){
@@ -239,9 +261,43 @@ function handleReq(req,res){return (async()=>{
     }
     return response(res,400,{error:'Unknown reward review action'});
   }
+  if(req.method==='GET'&&route==='/api/admin/dashboard'){
+    if(!rate(req.socket.remoteAddress||'?','admin-dashboard',60,60000))
+      return response(res,429,{error:'Too many dashboard requests'});
+    if(!admin(req))return response(res,403,{error:'Admin authorization required'});
+    const now=Date.now();
+    const online=u=>u.presenceActive===true&&now-(u.lastSeen||0)<=ACTIVE_WINDOW_MS;
+    const liveLoc=(member)=>{
+      if(!member.shareLocation)return null;
+      const l=db.locations[member.id];
+      if(!l||!Number.isFinite(l.updated)||l.updated>now+30000||
+         now-l.updated>LIVE_LOCATION_WINDOW_MS||
+         !Number.isFinite(l.latitude)||!Number.isFinite(l.longitude))return null;
+      return {mapsUrl:formatLoc(l),updated:l.updated,accuracy:l.accuracy||null};
+    };
+    const recentMembers=db.users.slice(-80).reverse().map(member=>({
+      code:member.code,name:member.name,phone:member.phone,
+      created:member.created,online:online(member),lastSeen:member.lastSeen||null,
+      locationSharing:!!member.shareLocation,liveLocation:liveLoc(member)
+    }));
+    const stats={
+      accounts:db.users.length,
+      online:db.users.filter(online).length,
+      sharingEnabled:db.users.filter(member=>member.shareLocation).length,
+      recentGps:db.users.filter(member=>!!liveLoc(member)).length,
+      pendingWithdrawals:db.withdrawals.filter(w=>w.status==='pending').length,
+      pendingReferrals:db.referrals.filter(r=>r.status==='pending').length,
+      botConfigured:!!db.bot.token,
+      botTestDelivered:db.botStatus.testDelivered===true
+    };
+    const bot={configured:!!db.bot.token,chatId:db.bot.chatId||'',
+      lastTestAt:db.botStatus.lastTestAt||null,lastDeliveredAt:db.botStatus.lastDeliveredAt||null,
+      lastError:db.botStatus.lastError||''};
+    return response(res,200,{stats,bot,recentMembers,asOf:now});
+  }
   if(req.method==='GET'&&route==='/api/admin/config'){
     if(!admin(req))return response(res,403,{error:'Invalid server admin secret'});
-    return response(res,200,{configured:!!db.bot.token,chatId:db.bot.chatId,accounts:db.users.length,sharing:Object.keys(db.locations).length});
+    return response(res,200,{configured:!!db.bot.token,chatId:db.bot.chatId,accounts:db.users.length,sharing:db.users.filter(x=>x.shareLocation).length,botStatus:{lastTestAt:db.botStatus.lastTestAt||null,testDelivered:db.botStatus.testDelivered===true,lastDeliveredAt:db.botStatus.lastDeliveredAt||null,lastFailedAt:db.botStatus.lastFailedAt||null,lastError:db.botStatus.lastError||'',configuredAt:db.botStatus.configuredAt||null}});
   }
   if(!u)return response(res,401,{error:'Please sign in again'});
   if(req.method==='POST'&&route==='/api/wallet/accounts'){

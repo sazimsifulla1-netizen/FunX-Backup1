@@ -53,17 +53,31 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
-      - name: Publish FunX v4.2.0 direct APK download
-        if: github.ref == 'refs/heads/main'
+      - name: Check that the live API is reachable before publishing an installable release
+        id: live_backend
+        env:
+          FUNX_SERVER_URL: ${{ inputs.server_url || vars.FUNX_SERVER_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if curl -fsS --max-time 12 "${FUNX_SERVER_URL}/health" | grep -q '"service":"FunX"'; then
+            echo 'ready=true' >> "${GITHUB_OUTPUT}"
+            echo 'FunX backend health verified.'
+          else
+            echo 'ready=false' >> "${GITHUB_OUTPUT}"
+            echo 'FunX backend is unavailable; APK is kept as a build artifact, not published as a working release.'
+          fi
+      - name: Publish FunX v4.2.1 direct APK download
+        if: github.ref == 'refs/heads/main' && steps.live_backend.outputs.ready == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          cp app/build/outputs/apk/debug/app-debug.apk FunX-v4.2.0.apk
-          unzip -t FunX-v4.2.0.apk | grep -q 'No errors detected'
-          if gh release view v4.2.0 -R "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            gh release upload v4.2.0 FunX-v4.2.0.apk --clobber -R "${GITHUB_REPOSITORY}"
+          cp app/build/outputs/apk/debug/app-debug.apk FunX-v4.2.1.apk
+          unzip -t FunX-v4.2.1.apk | grep -q 'No errors detected'
+          if gh release view v4.2.1 -R "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload v4.2.1 FunX-v4.2.1.apk --clobber -R "${GITHUB_REPOSITORY}"
           else
-            gh release create v4.2.0 FunX-v4.2.0.apk -R "${GITHUB_REPOSITORY}" --target "${GITHUB_SHA}" --title "FunX v4.2.0" --notes "Keyboard-safe chat scroll, typing preview that retains messages, unread inbox highlighting, persistent 20-minute rewards in three Dhaka time windows. Backend must run same version. Withdrawals are manual."
+            gh release create v4.2.1 FunX-v4.2.1.apk -R "${GITHUB_REPOSITORY}" --target "${GITHUB_SHA}" --title "FunX v4.2.1" --notes "Keyboard-safe chat scroll, typing preview that retains messages, unread inbox highlighting, persistent 20-minute rewards in three Dhaka time windows. Backend must run same version. Withdrawals are manual."
           fi
