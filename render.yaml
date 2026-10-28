@@ -1,0 +1,18 @@
+# FunX free PREVIEW only: filesystem is ephemeral. Do NOT use for real rewards or balances.
+services:
+  - type: web
+    name: funx-live-api
+    runtime: node
+    region: singapore
+    plan: free
+    branch: main
+    buildCommand: node --check server/server.js
+    startCommand: node server/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: FUNX_ADMIN_SECRET
+        generateValue: true

@@ -6,6 +6,10 @@ const html=fs.readFileSync('app/src/main/assets/index.html','utf8');
 const manifest=fs.readFileSync('app/src/main/AndroidManifest.xml','utf8');
 const server=fs.readFileSync('server/server.js','utf8');
 assert.match(manifest,/windowSoftInputMode="adjustResize"/);
+for(const marker of ['adminOverview','refreshAdminOverview','fxAdminRecentMaps','funxAdminJump',
+ 'Bot Token','loadAdminLocations','loadAdminPresence'])
+ assert.ok(html.includes(marker),'Admin feature missing: '+marker);
+
 for(const marker of ['--funx-chat-height','visualViewport.addEventListener','resizeChatForKeyboard',
   'unread-chat','peer-typing-bubble','inboxWindowSlots','earnWindowSlots',
   'activityWindowsSeconds','Complete 20 min in EACH','windowCardsHtml'])
