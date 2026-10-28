@@ -145,7 +145,7 @@ function samePhone(a,b){return normalPhone(a)===normalPhone(b);}
 function handleReq(req,res){return (async()=>{
   if(req.method==='OPTIONS')return response(res,204,{});
   const url=new URL(req.url,'http://localhost');let route=url.pathname;
-  if(req.method==='GET'&&route==='/health')return response(res,200,{ok:true,service:'FunX',version:'4.1'});
+  if(req.method==='GET'&&route==='/health')return response(res,200,{ok:true,service:'FunX',version:'4.2.1'});
   if(!rate(req.socket.remoteAddress||'?',route,120,60000))return response(res,429,{error:'Too many requests'});
   let b={};if(req.method==='POST'){if(!(req.headers['content-type']||'').startsWith('application/json'))return response(res,415,{error:'Expected JSON'});b=await body(req);}
   if(req.method==='POST'&&route==='/api/register'){

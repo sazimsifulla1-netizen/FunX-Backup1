@@ -60,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if curl -fsS --max-time 12 "${FUNX_SERVER_URL}/health" | grep -q '"service":"FunX"'; then
+          if curl -fsS --max-time 12 "${FUNX_SELECTED_API_URL}/health" | grep -q '"service":"FunX"'; then
             echo 'ready=true' >> "${GITHUB_OUTPUT}"
             echo 'FunX backend health verified.'
           else

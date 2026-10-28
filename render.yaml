@@ -6,6 +6,7 @@ services:
     region: singapore
     plan: free
     branch: main
+    autoDeployTrigger: 'off' # Keep preview data from being reset by routine source pushes
     buildCommand: node --check server/server.js
     startCommand: node server/server.js
     healthCheckPath: /health

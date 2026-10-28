@@ -12,7 +12,9 @@ for command in (['node','--check','server/server.js'],
                 ['node','tools/test-v421.js']):
     subprocess.run(command,check=True)
 
-url=(os.getenv('FUNX_SERVER_URL') or '').strip().rstrip('/')
+pinned_api_file=Path('.funx/production-url.txt')
+pinned_api=pinned_api_file.read_text(encoding='utf-8').strip() if pinned_api_file.exists() else ''
+url=(pinned_api or os.getenv('FUNX_SERVER_URL') or '').strip().rstrip('/')
 parts=urlsplit(url)
 if (parts.scheme != 'https' or not parts.hostname or parts.username or parts.password
     or parts.path or parts.query or parts.fragment or len(url)>250
@@ -26,4 +28,8 @@ if contents.count(old) != 1:
     sys.exit('ERROR: FunX default server placeholder not found exactly once')
 contents=contents.replace(old, f"const DEFAULT_SERVER='{url}';")
 path.write_text(contents)
-print('PASS: FunX 4.2.0 tests and HTTPS server configuration; domain:',parts.hostname)
+github_env=os.getenv('GITHUB_ENV')
+if github_env:
+    with open(github_env,'a',encoding='utf-8') as handle:
+        handle.write('FUNX_SELECTED_API_URL='+url+'\n')
+print('PASS: FunX 4.2.1 tests and HTTPS server configuration; domain:',parts.hostname)
