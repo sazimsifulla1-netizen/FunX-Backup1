@@ -5,7 +5,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('app/src/main/assets/index.html','utf8');
 const server=fs.readFileSync('server/server.js','utf8');
 const gradle=fs.readFileSync('app/build.gradle','utf8');
-assert.match(gradle,/versionName '4\.1\.1'/);
+assert.match(gradle,/versionName '4\.2\.0'/);
 assert.ok(html.includes('/* FunX 4.1 — progressive'));
 assert.ok(html.includes('/* Typing indicator retains'));
 for (const marker of [
@@ -24,4 +24,4 @@ for(const id of ['authPhone','authPass','savePayoutPassword','withdrawPassword']
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
 assert.ok(scripts.length>=2,'Expected inlined UI modules');
 for(const [i,s] of scripts.entries())new vm.Script(s[1],{filename:'funx-ui-'+i+'.js'});
-console.log('PASS: FunX 4.1.1 new UI, syntax, reward, typing, autofill and backend markers');
+console.log('PASS: FunX 4.2.0 new UI, syntax, reward, typing, autofill and backend markers');

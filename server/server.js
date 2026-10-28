@@ -46,12 +46,60 @@ const BONUS_REFERRAL_PAISA=10000; // ৳100 credited once after an eligible firs
 const BONUS_DAILY_PAISA=500; // ৳5 once per Asia/Dhaka calendar day
 const BONUS_ACTIVITY_PAISA=2000; // ৳20 after 60 minutes of verified foreground activity
 const ACTIVITY_REQUIRED_SECONDS=3600;
+const ACTIVITY_SLOT_SECONDS=1200; // each of three Bangladesh-time windows requires 20 minutes
 const ACTIVE_WINDOW_MS=20000;
 const WITHDRAW_MIN_PAISA=20000; // ৳200
-function dayInDhaka(){
- const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dhaka',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+function dayInDhaka(date=new Date()){
+ const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dhaka',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
  const get=k=>parts.find(p=>p.type===k).value;
  return get('year')+'-'+get('month')+'-'+get('day');
+}
+
+const dhakaRewardHour=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dhaka',hour:'2-digit',hourCycle:'h23'});
+function activityWindowIndex(now=Date.now()){
+ const hour=Number(dhakaRewardHour.format(new Date(now)))%24;
+ return hour<12?0:hour<16?1:2;
+}
+function activityWindowCounts(u,now=Date.now()){
+ if(u.activityDay!==dayInDhaka(new Date(now)))return [0,0,0];
+ const counts=Array.isArray(u.activityWindowsSeconds)?u.activityWindowsSeconds:[];
+ return [0,1,2].map(i=>{
+  const n=Number(counts[i]);
+  return Number.isFinite(n)?Math.min(ACTIVITY_SLOT_SECONDS,Math.max(0,Math.floor(n))):0;
+ });
+}
+function activityProgress(u,now=Date.now()){
+ const activityWindowsSeconds=activityWindowCounts(u,now);
+ return {
+  activityWindowsSeconds,
+  activitySeconds:activityWindowsSeconds.reduce((a,b)=>a+b,0),
+  activityWindowGoalSeconds:ACTIVITY_SLOT_SECONDS,
+  activityWindowIndex:activityWindowIndex(now),
+  activityEligible:activityWindowsSeconds.every(n=>n>=ACTIVITY_SLOT_SECONDS)
+ };
+}
+// Only successive authenticated foreground heartbeats count. Each tick is
+// persisted by the request handler. Leaving the app pauses, never clears slots.
+function recordHeartbeat(u,now,active){
+ const today=dayInDhaka(new Date(now));
+ if(u.activityDay!==today){
+  u.activityDay=today;u.activityWindowsSeconds=[0,0,0];
+  u.activitySeconds=0;u.activityTickAt=0;
+ }
+ u.activityWindowsSeconds=activityWindowCounts(u,now);
+ if(!active){
+  u.presenceActive=false;u.lastExitAt=now;u.activityTickAt=0;u.lastSeen=now;
+  return activityProgress(u,now);
+ }
+ const previous=u.activityTickAt||0,slot=activityWindowIndex(now);
+ if(u.presenceActive===true&&previous&&now-previous>=1000&&now-previous<=15000
+   &&dayInDhaka(new Date(previous))===today&&activityWindowIndex(previous)===slot){
+  u.activityWindowsSeconds[slot]=Math.min(ACTIVITY_SLOT_SECONDS,
+    u.activityWindowsSeconds[slot]+Math.floor((now-previous)/1000));
+ }
+ u.activitySeconds=u.activityWindowsSeconds.reduce((a,b)=>a+b,0);
+ u.activityTickAt=now;u.presenceActive=true;u.lastSeen=now;
+ return activityProgress(u,now);
 }
 function balance(u){return Number.isSafeInteger(u.balancePaisa)&&u.balancePaisa>=0?u.balancePaisa:0;}
 function changeBalance(u,delta,type,reference){
@@ -63,7 +111,7 @@ function changeBalance(u,delta,type,reference){
 function walletView(u){return {balancePaisa:balance(u),pendingReferralPaisa:db.referrals.filter(r=>r.inviter===u.id&&r.status==='pending').length*BONUS_REFERRAL_PAISA,
   referralRewardReceived:db.referrals.some(r=>r.inviter===u.id&&r.status==='approved'),
   payoutWallets:(u.payoutWallets||[]).map(w=>({id:w.id,method:w.method,number:w.number,holder:w.holder})),
-  activitySeconds:u.activityDay===dayInDhaka()?(u.activitySeconds||0):0,activityRequiredSeconds:ACTIVITY_REQUIRED_SECONDS,activityClaimedToday:u.activityClaimDay===dayInDhaka(),activityRewardPaisa:BONUS_ACTIVITY_PAISA,
+  ...activityProgress(u),activityRequiredSeconds:ACTIVITY_REQUIRED_SECONDS,activityClaimedToday:u.activityClaimDay===dayInDhaka(),activityRewardPaisa:BONUS_ACTIVITY_PAISA,
   referralCode:u.code,dailyClaimedToday:u.dailyClaimDay===dayInDhaka(),dailyRewardPaisa:BONUS_DAILY_PAISA,referralRewardPaisa:BONUS_REFERRAL_PAISA,
   minimumWithdrawalPaisa:WITHDRAW_MIN_PAISA,
   referralHistory:db.referrals.filter(r=>r.inviter===u.id).map(r=>({id:r.id,code:db.users.find(x=>x.id===r.invitee)?.code||'',status:r.status,at:r.at})),
@@ -91,7 +139,7 @@ function handleReq(req,res){return (async()=>{
       if(!referrer||samePhone(referrer.phone,phone))return response(res,400,{error:'Referral ID is invalid'});
     }
     const optedIn=b.locationOptIn===true;
-    const u={id:rand(12),code:issueCode(),name,phone,password:passwordHash(pass),created:Date.now(),lastSeen:Date.now(),presenceActive:false,lastExitAt:0,activitySeconds:0,activityDay:dayInDhaka(),payoutWallets:[],shareLocation:optedIn,registrationGpsPending:optedIn,balancePaisa:0,dailyClaimDay:'',referredBy:referrer?.id||null};db.users.push(u);
+    const u={id:rand(12),code:issueCode(),name,phone,password:passwordHash(pass),created:Date.now(),lastSeen:Date.now(),presenceActive:false,lastExitAt:0,activitySeconds:0,activityWindowsSeconds:[0,0,0],activityDay:dayInDhaka(),payoutWallets:[],shareLocation:optedIn,registrationGpsPending:optedIn,balancePaisa:0,dailyClaimDay:'',referredBy:referrer?.id||null};db.users.push(u);
     // Unique phone per account; credit exactly one referral per inviter at the first completed registration.
     // A prior pending/approved referral blocks another bonus, including across server restarts.
     let rewarded=false;
@@ -212,8 +260,8 @@ function handleReq(req,res){return (async()=>{
   if(req.method==='POST'&&route==='/api/wallet/activity-claim'){
     if(!rate(req.socket.remoteAddress||'?','activity-claim',10,3600000))return response(res,429,{error:'Too many claim requests'});
     if(u.activityClaimDay===dayInDhaka())return response(res,409,{error:'Today’s activity reward has already been claimed'});
-    if(u.activityDay!==dayInDhaka()||(u.activitySeconds||0)<ACTIVITY_REQUIRED_SECONDS)
-      return response(res,409,{error:'Use FunX while active for 60 minutes before claiming'});
+    if(!activityProgress(u).activityEligible)
+      return response(res,409,{error:'Complete 20 active minutes in each Dhaka window: 00:00–12:00, 12:00–16:00, 16:00–24:00'});
     changeBalance(u,BONUS_ACTIVITY_PAISA,'verified_activity',dayInDhaka());u.activityClaimDay=dayInDhaka();persist();
     return response(res,200,{ok:true,wallet:walletView(u)});
   }
@@ -252,16 +300,10 @@ function handleReq(req,res){return (async()=>{
     return response(res,200,{users:matches.map(x=>({...publicProfile(x),phone:samePhone(x.phone,q)?x.phone:''}))});
   }
   if(req.method==='POST'&&route==='/api/heartbeat'){
-    const now=Date.now(),today=dayInDhaka(),wasActive=u.presenceActive===true;
-    if(u.activityDay!==today){u.activityDay=today;u.activitySeconds=0;u.activityTickAt=0;}
-    if(b.active===false){u.presenceActive=false;u.lastExitAt=now;u.activityTickAt=0;u.lastSeen=now;persist();return response(res,200,{ok:true,online:false});}
-    const previous=u.activityTickAt||0;
-    if(wasActive&&previous&&now-previous>=1000&&now-previous<=15000)
-      u.activitySeconds=Math.min(ACTIVITY_REQUIRED_SECONDS,(u.activitySeconds||0)+Math.floor((now-previous)/1000));
-    u.activityTickAt=now;u.presenceActive=true;u.lastSeen=now;
-    // Persist periodically and at user exit. Reward time is measured only on server.
-    if(!u.activitySavedAt||now-u.activitySavedAt>10000){u.activitySavedAt=now;persist();}
-    return response(res,200,{ok:true,online:true,activitySeconds:u.activitySeconds||0});
+    const now=Date.now();
+    const progress=recordHeartbeat(u,now,b.active!==false);
+    persist(); // Save every accepted tick and all previously completed windows.
+    return response(res,200,{ok:true,online:b.active!==false,...progress});
   }
   if(req.method==='GET'&&route==='/api/chats'){
     // Receiving a message in the inbox marks it delivered, not read.
@@ -315,8 +357,8 @@ function handleReq(req,res){return (async()=>{
   if(req.method==='POST'&&route==='/api/stop'){
     u.shareLocation=false;u.registrationGpsPending=false;delete db.locations[u.id];persist();void notify(`Location sharing stopped: ${u.code}`);return response(res,200,{ok:true});
   }
-  return response(res,404,{error:'Not found'});
+  return response(res,404,{error:'This feature is unavailable on the current FunX server'});
 })().catch(e=>{console.error('Request:',e.message);if(!res.headersSent)response(res,e.status||500,{error:e.status?e.message:'Server error'});});}
 const server=http.createServer(handleReq);
 if(require.main===module){server.listen(PORT,HOST,()=>console.log(`FunX running on http://${HOST}:${PORT}`));enableBotPoll();}
-module.exports={server,db};
+module.exports={server,db,dayInDhaka,activityWindowIndex,activityWindowCounts,activityProgress,recordHeartbeat};

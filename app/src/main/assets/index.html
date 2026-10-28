@@ -53,6 +53,26 @@
 @keyframes funxTypingDot{0%,55%,100%{transform:translateY(0);opacity:.35}25%{transform:translateY(-4px);opacity:1}}
 .inbox-typing{margin-top:4px}.typing-last-preview{background:#e4f8ed;color:#29624c;font-size:11px;padding:7px 14px;border-bottom:1px solid #c4ebd5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
+
+/* FunX v4.2: keyboard-aware chat, saved reward windows and highlighted unread rows. */
+:root{--funx-chat-height:100dvh}
+html,body{height:100%;overscroll-behavior:none}
+.app{height:var(--funx-chat-height,100dvh)!important;min-height:0}
+#conversation{min-height:0;overflow:hidden}
+#conversation .chatbar,#conversation .composer{flex-shrink:0}
+#conversation .messages{flex:1 1 auto;min-height:0;overflow-y:auto;scroll-padding-bottom:12px;overscroll-behavior:contain}
+.chat-list .item.unread-chat{background:#e7fff2;border-left:4px solid #15b77c;padding-left:12px}
+.chat-list .item.unread-chat .name{font-weight:900;color:#065d45}
+.chat-list .item.unread-chat .desc{font-weight:800;color:#16493a}
+.chat-list .item.unread-chat .time{font-weight:800;color:#03875a}
+.reward-window-list{display:grid;gap:9px;margin:10px 0}
+.reward-window-row{background:#f0faf6;border:1px solid #d5ebe0;border-radius:12px;padding:9px 10px}
+.reward-window-header{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:#145d4d;font-weight:750}
+.reward-window-track{height:7px;margin-top:7px;border-radius:8px;background:#d2e6dc;overflow:hidden}
+.reward-window-track>span{display:block;background:linear-gradient(90deg,#07a588,#3cd87c);height:100%;width:0;transition:width .25s}
+.reward-window-state{font-size:10px;color:#55756b}
+#inboxReward .reward-window-row{background:#fff}
+.peer-typing-bubble{align-self:flex-start;background:#fff;border-radius:13px;padding:9px 13px;min-width:50px;color:#138878;box-shadow:0 1px 4px #0001}
 </style></head><body><div class="app" id="app">
   <div id="intro" class="intro"><button class="intro-corner" aria-label="Continue" onclick="introCornerTap()"></button><div class="logo" aria-label="FunX"><span>F</span></div><h1>Fun<span style="color:#ce5cff">X</span></h1><div class="sub">Your Private Chatting Space</div><p class="sub">Connect. Chat. Earn with verified referrals.</p><div class="intro-percent" id="introPercent">1%</div><div class="intro-track"><div id="introProgress"></div></div><p class="sub" id="introWait" style="margin-top:17px">Preparing your experience</p><p class="sub">By Sazim Codex ldt.</p></div>
   <div id="auth" class="auth hide"><div class="brand" onclick="adminTap()">Fun<b>X</b></div><div class="sub">By Sazim Codex ldt.</div><div class="earn-hero" style="margin-top:22px"><div class="earn-offer">FUNX · PRIVATE CHATTING & REWARDS</div><h2 style="margin:10px 0">Chat privately. Earn together.</h2><div class="earn-grid"><div><div class="earn-amount">৳100</div><div class="sub">First verified referral only</div></div><div><div class="earn-amount">৳5</div><div class="sub">Daily claim</div></div></div><div class="reward-note" style="margin-top:11px">Request withdrawal from ৳200 via bKash or Nagad · subject to verification and payout approval. No automatic cash transfer.</div></div><h2 id="authHeading">Create your account</h2><p class="sub">Find friends by their 5-character FunX ID or phone number.</p><div class="card"><div id="nameWrap"><div class="label">Full name</div><input id="authName" maxlength="48" placeholder="Your name" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></div><div class="label">Phone number</div><input id="authPhone" inputmode="tel" placeholder="+8801XXXXXXXXX" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="label">Password</div><input type="password" id="authPass" placeholder="At least 8 characters" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div id="referralWrap"><div class="label">Referral ID (optional)</div><input id="authReferral" maxlength="5" autocapitalize="characters" placeholder="Friend's 5-character FunX ID"><p class="earn-info">The inviter's ৳100 bonus is pending until the referred registration is approved by the administrator.</p></div><div id="registerNote" class="checkline"><input id="regPrivacy" type="checkbox"><span>I understand that FunX stores my account and chat messages on its server, and that the server administrator and their configured Telegram bot receive my name, phone number and FunX ID when I register. My password is never forwarded. <b>My chat contents are not forwarded to Telegram. Location sharing is separate and optional. If I enable it, the server administrator can view a recent map link while sharing is active. Wallet withdrawal details (name, bKash/Nagad number, amount) are visible to the administrator and may be sent to the configured Telegram administrator to process a requested payout. Rewards are subject to verification and funding.</b></span></div><label id="registerLocationNote" class="checkline"><input id="regShareLocation" type="checkbox" onchange="registrationShareChanged(this.checked)"><span><b>Optional: Share my live location with FunX.</b> If enabled, my registration name, phone, FunX ID, GPS position, accuracy and update time are visible to the FunX administrator, and are sent to the configured Telegram bot after the first GPS fix. Android may ask for location and notification permissions after you press Register. After registration, sharing may continue while the app is minimized with a visible ongoing notification. I can stop sharing at any time in the Location tab or the notification.</span></label><div id="regLocationStatus" class="status" role="status" aria-live="polite">Location sharing is OFF. Location access is optional. Press Register to continue; Allow or Deny will both create the account.</div><button class="btn" id="authAction" onclick="submitAuth()">Register</button><button class="switch" onclick="toggleAuth()" id="authSwitch">Already registered? Sign in</button><div class="status" id="authError" style="display:none"></div><button class="light" id="restoreSessionButton" style="display:none;width:100%" onclick="restoreSession()">Retry saved sign-in</button></div><div class="footer">English interface · FunX is independent of WhatsApp</div></div>
@@ -228,7 +248,7 @@ async function sendPhoto(ev){let file=ev.target.files?.[0];ev.target.value='';if
 function typingNow(){if(!peer||Date.now()-lastType<1600)return;lastType=Date.now();api('/api/typing',{body:{peer:peer.id,typing:true}}).catch(()=>{})}
 function callPeer(){if(peer)dial(peer.phone)}function dial(phone){if(native)native.dialNumber(phone);else toast('Phone dialer is available in the Android app')}
 async function poll(){if(!me||!server||refreshBusy||document.hidden||!appVisible)return;refreshBusy=true;try{await api('/api/heartbeat',{body:{active:true}});let r=await api('/api/chats');chats=r.chats;if(tab==='chats'&&!peer)renderChats();if(peer)await loadMessages();if(tab==='updates'){const s=await api('/api/statuses');statusUpdates=s.statuses;renderStatuses();}if(tab==='location')renderLocation();if(tab==='earn')await refreshEarn()}catch(e){if(e.status===401)toast('Your session needs to be renewed. Sign in once again if it remains expired.')}finally{refreshBusy=false}}
-async function findUser(){const q=$('findQuery').value.trim();try{const r=await api('/api/search?q='+encodeURIComponent(q));$('findResult').innerHTML=r.users.map(u=>`<div class="item" onclick="startPeer('${u.id}')"><div class="avatar">${safe(u.name[0])}</div><div class="content"><div class="name">${safe(u.name)}</div><div class="desc">ID: ${safe(u.code)}${u.phone?' · '+safe(u.phone):''}</div></div><span class="green">Chat ›</span></div>`).join('')||'<p>No user found. Search the exact ID or full phone.</p>';}catch(e){$('findResult').textContent=e.message}}
+async function findUser(){const q=$('findQuery').value.trim();try{const r=await api('/api/search?q='+encodeURIComponent(q));$('findResult').innerHTML=r.users.map(u=>`<div class="item" onclick="startPeer('${u.id}')"><div class="avatar">${safe(u.name[0])}</div><div class="content"><div class="name">${safe(u.name)}</div><div class="desc">ID: ${safe(u.code)}${u.phone?' · '+safe(u.phone):''}</div></div><span class="green">Chat ›</span></div>`).join('')||'<p>No matching member yet. Check the full FunX ID or phone number.</p>';}catch(e){$('findResult').textContent=e.message}}
 function startPeer(id){let el=$('findResult').querySelector(`[onclick="startPeer('${id}')"]`);if(!el)return;let name=el.querySelector('.name').textContent;let desc=el.querySelector('.desc').textContent;let phone=desc.includes(' · ')?desc.split(' · ').at(-1):'';let code=desc.slice(4,9);peer={id,name,phone,code};hideModal();openChat(id)}
 async function saveStatus(){let text=$('newStatus').value.trim();try{await api('/api/statuses',{body:{text}});hideModal();const r=await api('/api/statuses');statusUpdates=r.statuses;renderStatuses();toast('Status published')}catch(e){toast(e.message)}}
 function copyCode(){if(navigator.clipboard?.writeText)navigator.clipboard.writeText(me.code).then(()=>toast('FunX ID copied'));else toast('Your ID: '+me.code)}
@@ -286,6 +306,22 @@ boot();
   const oldApi = api, oldRenderTab = renderTab, oldRenderEarn = renderEarnTab;
   const oldShowApp = showApp, oldOpenModal = openModal;
   let walletCache = null, liveSeconds = 0, lastWalletFetch = 0;
+  let windowSeconds=[0,0,0],rewardWindowIndex=0;
+  const windowNames=['12 AM – 12 PM','12 PM – 4 PM','4 PM – 12 AM'];
+  function windowCardsHtml(){
+    return '<div class="reward-window-list">'+windowNames.map((name,i)=>
+      '<div class="reward-window-row" data-window="'+i+'"><div class="reward-window-header"><span>'+name+'</span><span class="reward-window-minutes">0 / 20 min</span></div><div class="reward-window-track"><span></span></div><small class="reward-window-state">Upcoming</small></div>').join('')+'</div>';
+  }
+  function updateWindowCards(rootId){
+    const root=document.getElementById(rootId);if(!root)return;
+    root.querySelectorAll('[data-window]').forEach(row=>{
+      const i=Number(row.dataset.window),n=Math.min(1200,Number(windowSeconds[i]||0));
+      row.querySelector('.reward-window-minutes').textContent=Math.floor(n/60)+' / 20 min';
+      row.querySelector('.reward-window-track span').style.width=(n/12)+'%';
+      row.querySelector('.reward-window-state').textContent=n>=1200?'✓ Complete':i<rewardWindowIndex?'Window ended':i>rewardWindowIndex?'Upcoming':'Counting while FunX is active';
+    });
+  }
+
   let rewardCycle = Date.now() + 30*60*1000, earnCategory = 'activity';
   let adminKeyForSession = '', contactTyping = false;
   const fmtTime = ms => new Date(ms).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
@@ -302,10 +338,14 @@ boot();
     }
     if(route==='/api/heartbeat'&&typeof result.activitySeconds==='number'){
       liveSeconds=result.activitySeconds;
+      if(Array.isArray(result.activityWindowsSeconds))windowSeconds=result.activityWindowsSeconds;
+      if(Number.isInteger(result.activityWindowIndex))rewardWindowIndex=result.activityWindowIndex;
       updateInboxReward();updateEarnMeter();
     }
     if(route==='/api/wallet'&&result.wallet){
       walletCache=result.wallet;liveSeconds=result.wallet.activitySeconds||0;
+      if(Array.isArray(result.wallet.activityWindowsSeconds))windowSeconds=result.wallet.activityWindowsSeconds;
+      if(Number.isInteger(result.wallet.activityWindowIndex))rewardWindowIndex=result.wallet.activityWindowIndex;
       lastWalletFetch=Date.now();updateInboxReward();updateEarnMeter();
     }
     return result;
@@ -316,13 +356,15 @@ boot();
     const elapsed=node.querySelector('#inboxActivityMinutes');if(elapsed)elapsed.textContent=secsText(liveSeconds);
     const percent=node.querySelector('#inboxPercent');if(percent)percent.textContent=progress(liveSeconds)+'%';
     const balance=node.querySelector('#inboxWalletAmount');if(balance)balance.textContent=walletCache?money(walletCache.balancePaisa):'৳—';
-    const status=node.querySelector('#inboxRewardStatus');if(status)status.textContent=walletCache?.activityClaimedToday?'৳20 claimed today':liveSeconds>=3600?'৳20 ready to claim':'৳20 unlocks at 60 minutes';
+    const status=node.querySelector('#inboxRewardStatus');if(status)status.textContent=walletCache?.activityClaimedToday?'৳20 claimed today':windowSeconds.every(n=>n>=1200)?'৳20 ready to claim':'Complete 20 min in EACH time window';
+    updateWindowCards('inboxWindowSlots');
     const due=node.querySelector('#inboxRewardCycle');if(due)due.textContent='30-minute reward check: '+cycleText();
   }
   function updateEarnMeter(){
     const bar=document.getElementById('activityBarFill');if(bar)bar.style.width=progress(liveSeconds)+'%';
     const minutes=document.getElementById('activityExactMinutes');if(minutes)minutes.textContent=secsText(liveSeconds);
     const pct=document.getElementById('activityPercent');if(pct)pct.textContent=progress(liveSeconds)+'%';
+    updateWindowCards('earnWindowSlots');
   }
   async function refreshInboxWallet(){if(!me||!token||!appVisible)return;
     try{await api('/api/wallet')}catch(e){}finally{updateInboxReward()}
@@ -333,20 +375,26 @@ boot();
       subtitle.innerHTML='<span class="typing-animated">typing<span class="typing-dots"><i></i><i></i><i></i></span></span>';
     }
   }
+  // Leave all actual messages in place; animate just an extra typing bubble.
   function updateTypingPreview(){
-    const container=document.getElementById('messages');if(!container)return;
-    let note=document.getElementById('typingLastPreview');
-    if(!note){note=document.createElement('div');note.id='typingLastPreview';note.className='typing-last-preview hide';container.parentElement.insertBefore(note,container);}
-    if(!contactTyping||!peer){note.classList.add('hide');return;}
-    const previous=[...messages].reverse().find(m=>m.from===peer.id);
-    const lastText=previous?(previous.type==='image'?'📷 Photo':previous.text):'No previous messages';
-    note.textContent='💬 Last message: '+lastText.slice(0,145);
-    note.classList.remove('hide');
+    const list=document.getElementById('messages');if(!list)return;
+    const old=document.getElementById('peerTypingBubble');
+    if(!peer||!contactTyping){if(old)old.remove();return;}
+    if(!old){
+      const bubble=document.createElement('div');bubble.id='peerTypingBubble';
+      bubble.className='peer-typing-bubble';
+      bubble.setAttribute('aria-label','Contact is typing');
+      bubble.innerHTML='<span class="typing-dots"><i></i><i></i><i></i></span>';
+      list.appendChild(bubble);
+    }
+    if(document.activeElement?.id==='messageInput'||list.scrollHeight-list.scrollTop-list.clientHeight<150)
+      list.scrollTop=list.scrollHeight;
   }
   function inboxHtml(){return `<div class="inbox-reward" id="inboxReward">
     <div class="inbox-head"><div><h3>🎁 Today’s rewards</h3><span class="inbox-note" id="inboxRewardStatus">Checking activity…</span></div><div class="inbox-balance" id="inboxWalletAmount">৳—</div></div>
     <div class="progress-line" style="margin-top:11px"><strong style="font-size:13px;color:#176454" id="inboxActivityMinutes">0 / 60 min</strong><span class="claim-pill" id="inboxPercent">0%</span></div>
     <div class="reward-progress"><div></div></div>
+    <div id="inboxWindowSlots">${windowCardsHtml()}</div>
     <div class="inbox-head"><span class="inbox-note" id="inboxRewardCycle">30-minute reward check: 30:00</span><button onclick="goTab('earn')">Open Earn ›</button></div>
   </div>`}
   window.renderTab=function(){
@@ -373,7 +421,7 @@ boot();
       const preview=last?(last.type==='image'?'📷 Photo':last.text):x.peer.code;
       const outbound=last&&last.from===me.id;
       const typingState=x.typing?'<div class="inbox-typing">typing <span class="typing-dots"><i></i><i></i><i></i></span></div>':'';
-      return `<div class="item" onclick="openChat('${safe(x.peer.id)}')">
+      return `<div class="item ${unread?'unread-chat':''}" onclick="openChat('${safe(x.peer.id)}')">
       <div class="avatar">${safe(x.peer.name[0])}</div><div class="content"><div class="name">${safe(x.peer.name)}${x.online?'<span class="online-dot"></span>':''}</div><div class="desc">${outbound?ticks(last)+' ':''}${safe(preview)}</div>${typingState}</div>
       <div class="chat-trailing"><span class="time">${last?fmtTime(last.at):''}</span>${unread?`<span class="unread-badge">${unread>99?'99+':unread}</span>`:''}</div></div>`;
     }).join('')||'<div class="empty"><div class="big">💬</div><strong>No conversations yet</strong>Find a friend by FunX ID to start chatting.</div>';
@@ -399,7 +447,8 @@ boot();
     }
     cards.forEach((node,i)=>{const dest=i===0?'activity':i===1?'daily':i===2?'referral':'wallet';sec.querySelector(`[data-category="${dest}"]`).appendChild(node)});
     const progressNode=document.getElementById('activityProgress');if(progressNode){
-      progressNode.insertAdjacentHTML('beforebegin',`<div class="progress-line"><span class="progress-main" id="activityExactMinutes">0 / 60 min</span><span class="claim-pill" id="activityPercent">0%</span></div><div class="reward-progress"><div id="activityBarFill"></div></div>`);
+      progressNode.insertAdjacentHTML('beforebegin',`<div class="progress-line"><span class="progress-main" id="activityExactMinutes">0 / 60 min</span><span class="claim-pill" id="activityPercent">0%</span></div><div class="reward-progress"><div id="activityBarFill"></div></div><div id="earnWindowSlots">${windowCardsHtml()}</div>`);
+      const explain=progressNode.parentElement.querySelector('p');if(explain)explain.textContent='Earn 20 active minutes in each Bangladesh-time slot: midnight–noon, noon–4 PM and 4 PM–midnight. Closing the app pauses the timer, not your saved progress.';
       progressNode.classList.add('reward-state');
     }
     const privacy=document.createElement('div');privacy.className='earn-privacy';
@@ -413,7 +462,13 @@ boot();
     document.querySelectorAll('[data-category]').forEach(x=>x.classList.toggle('active',x.dataset.category===next));
   };
   const oldRefreshEarn=refreshEarn;
-  window.refreshEarn=async function(){await oldRefreshEarn();updateEarnMeter();};
+  window.refreshEarn=async function(){
+    await oldRefreshEarn();updateEarnMeter();
+    const state=document.getElementById('activityProgress');
+    if(state)state.textContent='Saved today: '+Math.floor(liveSeconds/60)+' / 60 min · 20 min required in each time slot';
+    const btn=document.getElementById('activityClaimBtn');
+    if(btn)btn.disabled=!!walletCache?.activityClaimedToday||!windowSeconds.every(n=>n>=1200);
+  };
   const oldAdminLocations=loadAdminLocations,oldAdminPresence=loadAdminPresence,oldAdminRewards=adminRewards;
   const oldBotInfo=botInfo,oldRewardAction=rewardAction;
   function injectAdminKey(){const el=document.getElementById('adminSecret');if(el&&adminKeyForSession&&!el.value)el.value=adminKeyForSession;}
@@ -459,6 +514,30 @@ boot();
   if(authReferralNote)authReferralNote.textContent='The inviter receives ৳100 instantly after the first eligible, unique referred registration. Rewards are credited once per inviter.';
   const offer=auth.querySelector('.earn-grid .sub');if(offer)offer.textContent='First eligible referral · credited instantly';
   const footer=document.querySelector('#main .footer');if(footer)footer.textContent='FunX 4.1 · Private Chats & Rewards';
+  // Match Android's IME-visible viewport and scroll the actual message list.
+  // This preserves the last bubbles while composing, like a normal messenger.
+  function resizeChatForKeyboard(){
+    const viewport=window.visualViewport;
+    const height=Math.round(viewport?.height||window.innerHeight||0);
+    if(height>=240)document.documentElement.style.setProperty('--funx-chat-height',height+'px');
+    if(!peer||document.getElementById('conversation')?.classList.contains('hide'))return;
+    window.requestAnimationFrame(()=>{
+      const list=document.getElementById('messages');
+      if(list)list.scrollTop=list.scrollHeight;
+    });
+  }
+  window.addEventListener('resize',resizeChatForKeyboard);
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',resizeChatForKeyboard);
+    window.visualViewport.addEventListener('scroll',resizeChatForKeyboard);
+  }
+  document.getElementById('messageInput')?.addEventListener('focus',()=>{
+    resizeChatForKeyboard();
+    setTimeout(resizeChatForKeyboard,100);
+    setTimeout(resizeChatForKeyboard,320);
+    setTimeout(resizeChatForKeyboard,600);
+  });
+  resizeChatForKeyboard();
   setInterval(()=>{
     if(!me||!appVisible||document.hidden)return;
     if(Date.now()>=rewardCycle){rewardCycle=Date.now()+30*60*1000;void refreshInboxWallet()}
