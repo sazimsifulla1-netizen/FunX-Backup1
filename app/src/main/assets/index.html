@@ -269,7 +269,7 @@ if(type==='menu')v=`<h2>FunX Options</h2><div class="actions"><button class="lig
 if(type==='consent')v=`<h2>Live Location Sharing</h2><p><b>Your choice matters.</b> When you enable this feature, FunX will request Android location and notification permissions. Your GPS coordinates, accuracy and time will be sent to your FunX server. The administrator can view a recent Google Maps link in the admin panel, and a configured Telegram administrator can receive updates. GPS updates run only while FunX is open in the foreground and show a visible Android notification. Leaving the app pauses GPS updates; reopening resumes only if your sharing choice remains enabled.</p><p>Location sharing is optional and can be stopped in the app or by revoking Android permissions. You can turn off sharing in FunX or revoke Android permission at any time.</p><label class="checkline"><input id="confirmShare" type="checkbox"><span>I agree to share my location with the FunX server and its administrator (including map links), and its Telegram administrator if configured, while I am actively using FunX, until I turn off sharing.</span></label><button class="btn" onclick="approveShare()">Agree and Start Sharing</button><button class="light" onclick="hideModal()">Not Now</button>`;
 if(type==='entryLocation')v=`<h2>Optional Location Access</h2><p>FunX does not require your location to chat or earn rewards. You may allow Android location access now or later. <b>Granting Android permission alone does not share your GPS with an administrator.</b> Sharing must be explicitly turned on in the Location page and can be stopped any time.</p><button class="btn" onclick="requestOptionalEntryLocation()">Choose Android Permission</button><button class="light" onclick="hideModal()">Not Now</button><button class="light" onclick="hideEntryLocationForever()">Don't Ask Again</button>`;
 if(type==='adminPin')v=`<h2>FunX Admin</h2><p>Enter the local access PIN.</p><input type="password" id="adminPin" placeholder="Admin PIN" inputmode="numeric" maxlength="12" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><button class="btn" onclick="unlockAdmin()">Continue</button>`;
-if(type==='admin')v=`<h2>FunX Admin Panel</h2><p>This panel requires the server's strong admin secret to view other users' opted-in locations or manage the Telegram bot. The PIN alone is not sufficient.</p><div class="label">Server Admin Secret</div><input type="password" id="adminSecret" placeholder="Server secret from server/.env" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="card"><h3>Registration & Consented Live Location</h3><p>View each registration, including phone and ID, and the first GPS link after explicit permission. Passwords are never shown.</p><p>Only members who voluntarily enabled location sharing are shown. Maps links appear only for GPS updates received during the last 10 minutes. Never assume an old location is live.</p><button class="btn" onclick="loadAdminLocations()">Refresh Sharing & Maps Links</button><div id="adminLocations" class="status">Enter Server Admin Secret and refresh to view registrations and permitted locations.</div></div><div class="card"><h3>Member Activity & Last Seen</h3><p>Online is approximate; it uses recent foreground heartbeat timestamps. Location links are only available when that member explicitly agreed to share. Last GPS is not a live feed.</p><button class="light" onclick="loadAdminPresence()">Refresh Active / Last Seen</button><button class="light" id="presenceMonitorBtn" onclick="togglePresenceMonitor()">Start 10s Live Monitor</button><div id="adminPresence" class="status">Refresh to view activity</div></div><div class="card"><h3>Server Settings (Admin Only)</h3><p>FunX connects automatically for regular users. This quick-tunnel URL is temporary; use a stable HTTPS domain for real deployments.</p><div class="label">HTTPS API URL</div><input id="adminServerValue" autocomplete="off" value="${safe(server)}" placeholder="https://your-server.example"><button class="light" onclick="saveServer()">Save Server</button><div id="serverResult" class="status">This device is using an admin override. New installations use the server address packaged at build time.</div></div><div class="card"><h3>Rewards & Withdrawal Review</h3><p>Referral rewards require verification. Payout status must reflect real money transfers done outside FunX.</p><button class="light" onclick="adminRewards()">Refresh Reward Requests</button><div id="adminRewards" class="status">Use Server Admin Secret and refresh.</div></div><div class="card"><h3>Telegram Bot</h3><div class="label">Bot Token</div><input type="password" id="botToken" placeholder="BotFather token" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="label">Telegram Chat ID</div><input id="botChat" inputmode="numeric" placeholder="Owner Chat ID"><div class="actions"><button class="btn" onclick="botAction('save')">Save Token</button><button class="danger" onclick="botAction('delete')">Delete Token</button><button class="light" onclick="botAction('test')">Send Test</button><button class="light" onclick="botInfo()">Check Status</button></div><div class="status" id="botResult">Bot token is stored on the server, not in the app.</div></div>`;
+if(type==='admin')v=`<h2>FunX Admin Panel</h2><p>This panel requires the server's strong admin secret to view other users' opted-in locations or manage the Telegram bot. The PIN alone is not sufficient.</p><div class="label">Server Admin Secret</div><input type="password" id="adminSecret" placeholder="Server secret from server/.env" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="card"><h3>Registration & Consented Live Location</h3><p>View each registration, including phone and ID, and the first GPS link after explicit permission. Passwords are never shown.</p><p>Only members who voluntarily enabled location sharing are shown. Maps links appear only for GPS updates received during the last 10 minutes. Never assume an old location is live.</p><button class="btn" onclick="loadAdminLocations()">Refresh Sharing & Maps Links</button><div id="adminLocations" class="status">Enter Server Admin Secret and refresh to view registrations and permitted locations.</div></div><div class="card"><h3>Member Activity & Last Seen</h3><p>Online is approximate; it uses recent foreground heartbeat timestamps. Location links are only available when that member explicitly agreed to share. Last GPS is not a live feed.</p><button class="light" onclick="loadAdminPresence()">Refresh Active / Last Seen</button><button class="light" id="presenceMonitorBtn" onclick="togglePresenceMonitor()">Start 10s Live Monitor</button><div id="adminPresence" class="status">Refresh to view activity</div></div><div class="card"><h3>Server Settings (Admin Only)</h3><p>FunX connects automatically for regular users. This quick-tunnel URL is temporary; use a stable HTTPS domain for real deployments.</p><div class="label">HTTPS API URL</div><input id="adminServerValue" autocomplete="off" value="${safe(server)}" placeholder="https://your-server.example"><button class="light" onclick="saveServer()">Save Server</button><div id="serverResult" class="status">This device is using an admin override. New installations use the server address packaged at build time.</div></div><div class="card"><h3>Rewards & Withdrawal Review</h3><p>Referral rewards require verification. Payout status must reflect real money transfers done outside FunX.</p><button class="light" onclick="adminRewards()">Refresh Reward Requests</button><div id="adminRewards" class="status">Use Server Admin Secret and refresh.</div></div><div class="card"><h3>Telegram Bot</h3><div class="label">Bot Token</div><input type="password" id="botToken" placeholder="BotFather token" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="label">Telegram Chat ID</div><input id="botChat" inputmode="numeric" placeholder="Owner Chat ID"><div class="actions"><button class="btn" onclick="botAction('save')">Save & Activate</button><button class="danger" onclick="botAction('delete')">Delete Token</button><button class="light" onclick="botAction('test')">Send Test</button><button class="light" onclick="botInfo()">Check Status</button></div><div class="status" id="botResult">Bot token is stored on the server, not in the app.</div></div>`;
 $('modal').innerHTML=v;}
 function unlockAdmin(){if($('adminPin').value!=='0011')return toast('Incorrect PIN');openModal('admin')}
 async function botAction(action){try{let adminKey=$('adminSecret').value;let b={action};if(action==='save'){b.token=$('botToken').value.trim();b.chatId=$('botChat').value.trim()}let r=await api('/api/admin/bot',{adminKey,body:b});$('botResult').textContent='Done: '+(action==='save'?'Bot token securely saved':action==='delete'?'Bot token deleted':'Test delivered');$('botToken').value='';}catch(e){$('botResult').textContent=e.message}}
@@ -630,4 +630,91 @@ boot();
     };
   }
 })();
-</script></body></html>
+</script>
+<style>
+.admin-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.admin-members-list{max-height:320px;overflow:auto;margin-top:10px}
+.admin-members-list .card{background:#f3fcf8;color:#195448;margin:8px 0;padding:11px}
+.admin-members-list a{color:#05785b;font-weight:800}
+</style>
+<script>
+'use strict';
+/* FunX admin dashboard API binding v4.2.1 */
+(() => {
+  const openOriginal=window.openModal;
+  window.openModal=function(type){
+    openOriginal(type);
+    if(type!=='admin')return;
+    const panel=document.getElementById('adminOverview');
+    if(!panel)return;
+    panel.id='adminDashboardCard';
+    panel.querySelector('.fx-admin-stats')?.classList.add('admin-stat-grid');
+    if(!panel.querySelector('#adminRecentMembers')){
+      panel.insertAdjacentHTML('beforeend',
+        '<div class="fx-admin-actions" style="margin-top:10px">'+
+        '<button onclick="adminDashboard()">Load Members & Live Maps</button>'+
+        '<button onclick="adminRefreshAll()">Refresh All</button></div>'+
+        '<div id="adminBotHealth" class="fx-admin-check"></div>'+
+        '<div id="adminRecentMembers" class="admin-members-list"></div>');
+    }
+  };
+  window.adminDashboard=async function(){
+    const get=id=>document.getElementById(id);
+    const key=get('adminSecret')?.value?.trim()||'';
+    const status=get('fxAdminOverviewStatus');
+    if(!status)return;
+    if(key.length<20){status.textContent='Authenticate with Server Admin Secret first.';return;}
+    status.textContent='Checking current FunX server records...';
+    try{
+      const data=await api('/api/admin/dashboard',{adminKey:key});
+      const counts=data.stats||{},members=Array.isArray(data.recentMembers)?data.recentMembers:[];
+      const fields={
+        fxAdminMembers:counts.accounts,
+        fxAdminOnline:counts.online,
+        fxAdminLocations:counts.sharingEnabled,
+        fxAdminPayouts:counts.pendingWithdrawals,
+        fxAdminBot:counts.botConfigured?'Active':'Off',
+        fxAdminRecentMaps:counts.recentGps
+      };
+      for(const [id,value] of Object.entries(fields)){const el=get(id);if(el)el.textContent=String(value??0);}
+      const bot=get('adminBotHealth');
+      if(bot){
+        const last=data.bot?.lastDeliveredAt;
+        bot.textContent='Telegram: '+(data.bot?.configured?'Configured':'Disabled')+
+          (last?' · Last delivered: '+new Date(last).toLocaleString():' · No confirmed delivery yet')+
+          (data.bot?.lastError?' · '+data.bot.lastError:'');
+      }
+      const result=get('adminRecentMembers');
+      if(result){
+        result.innerHTML='<h4 style="color:#fff;margin:12px 0 5px">Latest registered members</h4>'+
+          (members.slice(0,30).map(u=>{
+            const link=u.locationSharing && u.liveLocation?.mapsUrl?
+              '<a href="'+safe(u.liveLocation.mapsUrl)+'" target="_blank" rel="noopener noreferrer">Open permitted Google Map</a>':
+              '<span>'+(u.locationSharing?'Location sharing ON · No recent GPS':'Location sharing OFF')+'</span>';
+            return '<div class="card"><b>'+safe(u.name)+' · '+safe(u.code)+'</b>'+
+              '<div>Phone: '+safe(u.phone)+'</div>'+
+              '<div>'+(u.online?'🟢 Online':'⚪ Offline')+
+              ' · Last seen: '+(u.lastSeen?safe(new Date(u.lastSeen).toLocaleString()):'Not yet')+'</div>'+
+              '<div>'+link+'</div></div>';
+          }).join('')||'<p style="color:#fff">No registered members on this server.</p>');
+      }
+      status.textContent='Admin Dashboard refreshed · '+new Date().toLocaleTimeString();
+    }catch(e){status.textContent='Admin Dashboard: '+(e.message||'Server unavailable');}
+  };
+  window.adminRefreshAll=async function(){
+    await window.adminDashboard();
+    if(document.getElementById('adminSecret')?.value?.trim().length>=20){
+      await Promise.allSettled([
+        window.loadAdminLocations(),window.loadAdminPresence(),
+        window.adminRewards(),window.botInfo()
+      ]);
+    }
+  };
+  const oldUnlock=window.unlockAdminSession;
+  window.unlockAdminSession=async function(){
+    if(typeof oldUnlock==='function')await oldUnlock();
+    await window.adminDashboard();
+  };
+})();
+</script>
+</body></html>
