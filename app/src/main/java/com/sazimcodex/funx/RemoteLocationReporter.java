@@ -23,10 +23,10 @@ public final class RemoteLocationReporter {
         try{URL u=new URL(v);return "https".equals(u.getProtocol())&&!u.getHost().isEmpty()&&u.getUserInfo()==null
                 &&(u.getPath().isEmpty()||u.getPath().equals("/"))&&u.getQuery()==null&&u.getRef()==null;}catch(Exception e){return false;}}
     private static SharedPreferences pref(Context c){return c.getApplicationContext().getSharedPreferences(LiveLocationService.STORE,Context.MODE_PRIVATE);}
-    public static void upload(Context c,Location l){SharedPreferences p=pref(c);if(!p.getBoolean("tracking_requested",false)||!p.getBoolean("remote_enabled",false)||!validUrl(p.getString("remote_url","")))return;
+    public static void upload(Context c,Location l){SharedPreferences p=pref(c);if(!p.getBoolean("tracking_requested",false)||!p.getBoolean("remote_enabled",false)||(p.getBoolean("appwise_enabled",false)&&!p.getBoolean("target_app_foreground",false))||!validUrl(p.getString("remote_url","")))return;
         long now=SystemClock.elapsedRealtime();if((lastAttempt!=0&&now-lastAttempt<30000)||!IN_FLIGHT.compareAndSet(false,true))return;lastAttempt=now;
         Context app=c.getApplicationContext();double lat=l.getLatitude(),lng=l.getLongitude();float acc=l.hasAccuracy()?l.getAccuracy():0;
-        NETWORK.execute(()->{try{SharedPreferences r=pref(app);if(!r.getBoolean("tracking_requested",false)||!r.getBoolean("remote_enabled",false))return;
+        NETWORK.execute(()->{try{SharedPreferences r=pref(app);if(!r.getBoolean("tracking_requested",false)||!r.getBoolean("remote_enabled",false)||(r.getBoolean("appwise_enabled",false)&&!r.getBoolean("target_app_foreground",false)))return;
             JSONObject b=new JSONObject();b.put("latitude",lat);b.put("longitude",lng);b.put("accuracy",acc);
             int code=send(app,r.getString("remote_url",""),"/api/location",b);
             if(code>=200&&code<300)r.edit().putLong("remote_sent",System.currentTimeMillis()).putString("remote_error","").apply();
