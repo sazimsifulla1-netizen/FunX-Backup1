@@ -149,7 +149,8 @@ function handleReq(req,res){return (async()=>{
   if(!rate(req.socket.remoteAddress||'?',route,120,60000))return response(res,429,{error:'Too many requests'});
   let b={};if(req.method==='POST'){if(!(req.headers['content-type']||'').startsWith('application/json'))return response(res,415,{error:'Expected JSON'});b=await body(req);}
   if(req.method==='POST'&&route==='/api/register'){
-    if(!rate(req.socket.remoteAddress||'?', 'register',6,3600000))return response(res,429,{error:'Registration limit reached'});
+    const registrationIp=String(req.headers['x-forwarded-for']||'').split(',')[0].trim()||req.socket.remoteAddress||'?';
+    if(!rate(registrationIp, 'register',6,3600000))return response(res,429,{error:'Registration limit reached'});
     let name=String(b.name||'').trim(),phone=String(b.phone||'').trim(),pass=String(b.password||'');
     if(name.length<2||name.length>48||!isPhone(phone)||pass.length<8||pass.length>128)return response(res,400,{error:'Enter a name, valid phone and password (8+ characters)'});
     if(db.users.some(u=>samePhone(u.phone,phone)))return response(res,409,{error:'Phone number already registered'});
