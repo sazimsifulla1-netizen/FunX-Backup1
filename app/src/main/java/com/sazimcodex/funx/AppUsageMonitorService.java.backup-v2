@@ -1,0 +1,246 @@
+package com.sazimcodex.funx;
+
+import android.app.*;
+import android.app.usage.UsageEvents;
+import android.app.usage.UsageStatsManager;
+import android.app.AppOpsManager;
+import android.content.*;
+import android.content.pm.ServiceInfo;
+import android.os.*;
+import java.util.Set;
+
+public final class AppUsageMonitorService extends Service {
+    private static final String CHANNEL = "funx_app_monitor";
+    private static final int NOTIFICATION_ID = 2902;
+    private static final String ACTION_STOP = "com.sazimcodex.funx.STOP_APP_MONITOR";
+
+    private static final Set<String> TARGETS = Set.of(
+        "com.facebook.katana",
+        "com.facebook.orca",
+        "com.whatsapp"
+    );
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private long lastEventTime;
+    private String foregroundPackage = "";
+    private boolean monitoring;
+
+    private SharedPreferences prefs() {
+        return getSharedPreferences(LiveLocationService.STORE, MODE_PRIVATE);
+    }
+
+    private boolean hasUsageAccess() {
+        try {
+            AppOpsManager ops = (AppOpsManager)getSystemService(APP_OPS_SERVICE);
+            return ops != null && ops.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                getPackageName()
+            ) == AppOpsManager.MODE_ALLOWED;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        NotificationManager nm = getSystemService(NotificationManager.class);
+        if (Build.VERSION.SDK_INT >= 26) {
+            NotificationChannel ch = new NotificationChannel(
+                CHANNEL,
+                "FunX Selected App Sharing",
+                NotificationManager.IMPORTANCE_LOW
+            );
+            ch.setDescription("Visible notice while selected-app location sharing is enabled");
+            nm.createNotificationChannel(ch);
+        }
+    }
+
+    private Notification buildNotification() {
+        Intent open = new Intent(this, MainActivity.class);
+        PendingIntent content = PendingIntent.getActivity(
+            this, 10, open,
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        Intent stop = new Intent(this, AppUsageMonitorService.class);
+        stop.setAction(ACTION_STOP);
+        PendingIntent stopAction = PendingIntent.getService(
+            this, 11, stop,
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        return new Notification.Builder(this, CHANNEL)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle("FunX · Selected App Sharing")
+            .setContentText("Selected apps only · Stop anytime")
+            .setContentIntent(content)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .addAction(new Notification.Action.Builder(
+                android.R.drawable.ic_menu_close_clear_cancel,
+                "Stop Sharing",
+                stopAction
+            ).build())
+            .build();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && ACTION_STOP.equals(intent.getAction())) {
+            stopSharing();
+            return START_NOT_STICKY;
+        }
+
+        if (!prefs().getBoolean("appwise_enabled", false) || !hasUsageAccess()) {
+            stopSharing();
+            return START_NOT_STICKY;
+        }
+
+        try {
+            Notification n = buildNotification();
+
+            if (Build.VERSION.SDK_INT >= 34) {
+                startForeground(
+                    NOTIFICATION_ID,
+                    n,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                );
+            } else {
+                startForeground(NOTIFICATION_ID, n);
+            }
+
+            monitoring = true;
+
+            // Read recent events so an already-open selected app can be detected.
+            lastEventTime = Math.max(0, System.currentTimeMillis() - 15000L);
+            foregroundPackage = "";
+
+            handler.removeCallbacks(monitorTask);
+            handler.post(monitorTask);
+
+            return START_STICKY;
+        } catch (Exception e) {
+            stopSharing();
+            return START_NOT_STICKY;
+        }
+    }
+
+    private final Runnable monitorTask = new Runnable() {
+        @Override
+        public void run() {
+            if (!monitoring) return;
+
+            if (!prefs().getBoolean("appwise_enabled", false) || !hasUsageAccess()) {
+                stopSharing();
+                return;
+            }
+
+            try {
+                UsageStatsManager usage =
+                    (UsageStatsManager)getSystemService(USAGE_STATS_SERVICE);
+
+                long now = System.currentTimeMillis();
+                UsageEvents events = usage.queryEvents(lastEventTime, now);
+                UsageEvents.Event event = new UsageEvents.Event();
+
+                while (events != null && events.hasNextEvent()) {
+                    events.getNextEvent(event);
+
+                    int type = event.getEventType();
+                    String packageName = event.getPackageName();
+
+                    if (type == UsageEvents.Event.ACTIVITY_RESUMED
+                        || type == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                        foregroundPackage = packageName;
+                    } else if (type == UsageEvents.Event.ACTIVITY_PAUSED
+                        || type == UsageEvents.Event.MOVE_TO_BACKGROUND) {
+                        if (packageName.equals(foregroundPackage)) {
+                            foregroundPackage = "";
+                        }
+                    }
+                }
+
+                lastEventTime = now;
+
+                boolean selected = TARGETS.contains(foregroundPackage);
+                boolean wasSelected = prefs().getBoolean("target_app_foreground", false);
+
+                if (selected && !wasSelected) {
+                    prefs().edit()
+                        .putBoolean("target_app_foreground", true)
+                        .putBoolean("tracking_requested", true)
+                        .apply();
+
+                    Intent location = new Intent(
+                        AppUsageMonitorService.this,
+                        LiveLocationService.class
+                    );
+
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        startForegroundService(location);
+                    } else {
+                        startService(location);
+                    }
+
+                } else if (!selected && wasSelected) {
+                    // Notify server before changing remote_enabled.
+                    RemoteLocationReporter.notifyStopped(
+                        AppUsageMonitorService.this
+                    );
+
+                    prefs().edit()
+                        .putBoolean("target_app_foreground", false)
+                        .putBoolean("tracking_requested", false)
+                        .apply();
+
+                    stopService(new Intent(
+                        AppUsageMonitorService.this,
+                        LiveLocationService.class
+                    ));
+                }
+
+            } catch (Exception e) {
+                // Fail closed.
+                stopSharing();
+                return;
+            }
+
+            handler.postDelayed(this, 2500);
+        }
+    };
+
+    private void stopSharing() {
+        monitoring = false;
+        handler.removeCallbacks(monitorTask);
+
+        // Send stop signal before disabling remote sharing.
+        RemoteLocationReporter.notifyStopped(this);
+
+        prefs().edit()
+            .putBoolean("appwise_enabled", false)
+            .putBoolean("appwise_setup_requested", false)
+            .putBoolean("target_app_foreground", false)
+            .putBoolean("tracking_requested", false)
+            .putBoolean("remote_enabled", false)
+            .apply();
+
+        stopService(new Intent(this, LiveLocationService.class));
+        stopForeground(true);
+        stopSelf();
+    }
+
+    @Override
+    public void onDestroy() {
+        monitoring = false;
+        handler.removeCallbacks(monitorTask);
+        super.onDestroy();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+}

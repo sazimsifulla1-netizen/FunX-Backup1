@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10142c"><title>FunX by Sazim Codex ldt.</title>
+<style>
+:root{--bg:#080d20;--panel:#101a34;--panel2:#182441;--text:#f5f7ff;--muted:#a9b5cd;--line:#2a3656;--accent:#a849ff;--cyan:#19dafa;--green:#27d88b;--bubble:#1c2949}*{box-sizing:border-box}body{margin:0;background:#05091a;color:var(--text);font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}input,textarea{color:var(--text);background:#151e38;border:1px solid #344265;border-radius:13px;padding:13px;width:100%;outline:none}input:focus,textarea:focus{border-color:var(--accent)}input::placeholder,textarea::placeholder{color:#8895b6}.hide{display:none!important}button:disabled{opacity:.5}.app{max-width:550px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg);overflow:hidden}.gradient{background:linear-gradient(135deg,#252052,#1b174b 44%,#0b284d)}.brand{font-size:26px;font-weight:850;letter-spacing:-1.2px;cursor:pointer;user-select:none}.brand b{background:linear-gradient(140deg,#e969ff,#954dff 55%,#18d5f6);color:transparent;background-clip:text}.sub{font-size:12px;color:var(--muted)}.head{padding:17px 18px 12px;background:linear-gradient(130deg,#1e1a44,#101b34);border-bottom:1px solid #2d3159}.hrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.btn-icon{color:#e2e9ff;border:0;background:transparent;font-size:22px;padding:8px;border-radius:12px}.btn-icon:active{background:#ffffff13}.tabs{display:flex;gap:1px;margin-top:15px}.tabs button{background:none;border:0;border-bottom:3px solid transparent;color:#acb4d8;padding:11px 7px;flex:1;font-size:12px;font-weight:700}.tabs button.on{color:#65e8fc;border-bottom-color:#a351fe}.body{flex:1;overflow-y:auto;overscroll-behavior:contain}.section{padding:17px}.list{padding:3px 0 20px}.item{display:flex;align-items:center;gap:13px;padding:14px 18px;border-bottom:1px solid #ffffff0a;cursor:pointer}.item:active{background:#ffffff0d}.avatar{width:48px;height:48px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#9f41ef,#11a6dc);font-size:19px;font-weight:800;color:white}.item .content{flex:1;min-width:0}.item .name{font-weight:700}.item .desc{margin-top:4px;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item .time{font-size:10px;color:var(--muted)}.btn,.danger,.light{border:0;border-radius:13px;padding:12px 17px;font-size:13px;font-weight:750}.btn{color:white;background:linear-gradient(110deg,#8a35f8,#bf3de8)}.light{background:#222e4f;color:#eff5ff;border:1px solid #364569}.danger{background:#4d2138;color:#ffb6cb}.actions{display:flex;gap:8px;flex-wrap:wrap}.search{display:flex;gap:9px;margin:15px 15px 5px}.search .btn{white-space:nowrap}.label{font-size:12px;font-weight:700;color:#c2c9e3;margin:12px 0 6px}.card{background:linear-gradient(140deg,#182141,#111b33);border:1px solid #313b62;border-radius:18px;padding:16px;margin-bottom:12px}.card p{color:var(--muted);line-height:1.5;font-size:13px}.pill{display:inline-flex;align-items:center;gap:6px;background:#372759;color:#ebcaff;border-radius:99px;padding:6px 11px;font-size:11px;font-weight:700}.green{color:var(--green)}.empty{text-align:center;color:var(--muted);padding:57px 30px}.empty .big{font-size:45px}.empty strong{display:block;color:white;margin:13px 0 6px}.FAB{position:absolute;bottom:27px;right:22px;border:0;border-radius:18px;background:linear-gradient(130deg,#af35ff,#6f4bf9);width:55px;height:55px;color:white;font-size:27px;box-shadow:0 9px 28px #9138f344}.intro{position:absolute;inset:0;z-index:18;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:radial-gradient(circle at 50% 35%,#40116a,#111431 50%,#050a1b);padding:22px}.logo{height:106px;width:106px;border-radius:28px;background:linear-gradient(150deg,#7f26f2,#131841 55%,#10c5e5);display:grid;place-items:center;box-shadow:0 0 50px #a021fc6b;font-size:76px;font-style:italic;font-weight:1000;line-height:1;color:#fff;border:2px solid #a144fc}.logo span{background:linear-gradient(180deg,#ff58d9,#8543ff,#1cc9fe);background-clip:text;color:transparent}.intro h1{font-size:44px;letter-spacing:-3px;margin:18px 0 0}.intro .sub{margin-top:9px}.auth{position:absolute;inset:0;z-index:10;overflow-y:auto;background:linear-gradient(160deg,#131b40,#070c21);padding:24px}.auth h2{font-size:26px;margin:30px 0 7px}.auth .card{margin-top:23px}.auth .sub{line-height:1.5}.auth .btn{width:100%;margin-top:14px}.auth .switch{border:0;color:#65e4fa;background:none;margin-top:18px}.msgview{display:flex;flex-direction:column;height:100%;min-height:0}.chatbar{background:#161d38;padding:12px 15px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--line)}.chatbar .avatar{height:37px;width:37px;font-size:16px}.chatbar .nm{flex:1}.chatbar .nm small{display:block;color:var(--green);font-size:11px}.messages{flex:1;overflow-y:auto;padding:18px 12px;background:radial-gradient(circle at 10% 20%,#141a34,#0c1327 72%);display:flex;flex-direction:column;gap:8px}.bubble{max-width:85%;padding:9px 11px;border-radius:13px;background:var(--bubble);font-size:14px;line-height:1.4;overflow-wrap:anywhere;align-self:flex-start}.bubble.mine{align-self:flex-end;background:#30214e}.bubble .meta{font-size:10px;color:#acb1cd;text-align:right;margin-top:4px;display:flex;justify-content:end;gap:4px}.bubble img{max-width:100%;max-height:290px;border-radius:8px;display:block}.read{color:#22dd99;font-weight:1000}.composer{background:#111a34;display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));align-items:center}.composer input{flex:1}.composer .btn{padding:13px}.screen{height:100%;display:flex;flex-direction:column}.panehead{padding:18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.panehead h2{font-size:20px;margin:0}.modalshade{position:absolute;inset:0;z-index:20;background:#01040cbb;display:flex;align-items:flex-end}.modal{max-height:92%;overflow:auto;width:100%;background:#131b32;border:1px solid #435076;padding:21px 18px 28px;border-radius:25px 25px 0 0;box-shadow:0 -14px 50px #0007}.modal h2{font-size:20px;margin:0 0 10px}.modal p,.modal li{font-size:13px;color:#c6cce1;line-height:1.6}.modal textarea{min-height:100px}.modal .btn,.modal .light,.modal .danger{margin-top:11px}.toast{position:absolute;z-index:25;bottom:35px;left:15px;right:15px;margin:auto;max-width:430px;background:#28335b;color:white;border:1px solid #535d8a;padding:14px 18px;border-radius:14px;text-align:center;box-shadow:0 8px 25px #0007}.locationline{font-size:14px;padding:8px 0;border-bottom:1px solid #323c5b}.status{margin:10px 0;padding:12px;border-radius:13px;background:#242b49;border:1px solid #3e486d;font-size:12px;color:#c6cde4}.checkline{display:flex;align-items:flex-start;gap:10px;padding:10px 0;font-size:13px;color:#cbd4eb}.checkline input{width:19px;height:19px;flex-shrink:0;accent-color:#a344fe;margin-top:1px}.code{font-size:29px;font-weight:900;letter-spacing:5px;color:#ab6bff;text-align:center;background:#111833;padding:15px;border-radius:12px}.footer{font-size:11px;color:#98a5c8;text-align:center;padding:15px}a{color:#72dafa}.spacer{height:12px}
+
+/* Rewards and reveal intro */
+.earn-hero{border-radius:22px;padding:23px 18px;background:linear-gradient(125deg,#38136f,#142849 65%,#095d72);border:1px solid #775ad8;box-shadow:0 8px 28px #0005}
+.earn-amount{font-size:32px;font-weight:900;letter-spacing:-1px;color:#f7ecff}.earn-offer{color:#c7fcff;font-weight:800;font-size:18px}
+.earn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.earn-grid .card{margin:0;padding:14px;text-align:center}
+.earn-info{font-size:11px;color:#bac5dc;line-height:1.55}
+.intro-percent{font-size:34px;font-weight:900;color:#8feafd;margin:18px 0 6px}
+.intro-track{height:10px;border-radius:10px;width:min(270px,80vw);background:#39436c;overflow:hidden}.intro-track div{background:linear-gradient(90deg,#bd57ff,#36daec);height:100%;width:1%;transition:width .08s linear}
+.intro-corner{position:absolute;top:0;right:0;width:84px;height:88px;border:0;background:transparent;z-index:30;opacity:0;touch-action:manipulation}
+.tabs button{font-size:11px;padding-inline:2px;min-width:0}.reward-note{font-size:12px;color:#b8d1f4;line-height:1.5}
+</style><style>
+/* FunX 4.1 — clean teal messenger UI; not affiliated with WhatsApp. */
+:root{--chat-teal:#075e54;--chat-deep:#054c45;--chat-mint:#d9fdd3;--chat-green:#19a784;--chat-paper:#f6f7f8;--chat-ink:#152d2b;--chat-muted:#667781}
+.app{background:var(--chat-paper);color:var(--chat-ink)}
+.head{background:var(--chat-teal);border:0;color:#fff;padding:16px 14px 0;box-shadow:0 2px 8px #16382c2c}
+.head .brand,.head .brand b{color:#fff;background:none;-webkit-text-fill-color:#fff;font-weight:850;letter-spacing:-.6px}.head .sub{color:#b9e3d7}
+.head .btn-icon{color:white}.tabs{margin-top:12px}.tabs button{color:#c6e0d7;font-size:12px;font-weight:750;border-bottom:3px solid transparent;padding:13px 4px}.tabs button.on{color:#fff;border-bottom-color:#c3fff2}
+.body{background:var(--chat-paper)}.body .section{padding:15px}.body .sub{color:#687c80}
+.body .card{background:white;border:1px solid #e4eeeb;border-radius:18px;box-shadow:0 3px 11px #185e4a0b}.body .card p,.body .card .earn-info{color:#64757b}
+.body h2,.body h3,.body h4,.body strong{color:#1a3832}.body .label{color:#456b62}
+.body input,.body select,.body textarea{color:#1d3b38!important;background:#f6faf9!important;border:1px solid #cdded9!important;border-radius:12px!important}
+.body input::placeholder{color:#7e9390}.body .code{color:#075e54;background:#eaf8f0;letter-spacing:4px}
+.body .status{background:#eff7f5;color:#38544b;border-color:#d4eae1}.body .pill{color:#066a56;background:#dbf5e9}
+.body .btn,.composer .btn{background:#087f68;color:#fff;box-shadow:0 4px 10px #087f6829}.body .light{background:#ecf7f2;border:1px solid #c9eadd;color:#0b6555}
+.body .FAB{background:#20a67d;border-radius:18px;box-shadow:0 6px 19px #066a5770;right:19px;bottom:24px}
+.body .search{background:white;border-radius:17px;padding:6px;margin:15px 15px 0;box-shadow:0 1px 8px #0035270b}.body .search input{border:0!important;background:#f5f8f7!important;padding:10px 12px}
+.chat-list .item{background:white;border-bottom:1px solid #eef1f0;padding:12px 16px;gap:13px}.chat-list .item .name{color:#203c36}.chat-list .item .desc{color:#697b7d;font-size:13px}.chat-list .avatar,.chatbar .avatar{background:linear-gradient(135deg,#0a7e72,#4bcaa0);color:white}.chat-list .time{color:#718681;font-size:11px}
+.chat-trailing{display:flex;flex-direction:column;align-items:flex-end;gap:7px}.unread-badge{background:#25d366;color:white;padding:3px 7px;min-width:22px;text-align:center;border-radius:25px;font-size:11px;font-weight:850}.chat-list .online-dot{display:inline-block;width:8px;height:8px;border-radius:100%;background:#1dba72;margin-left:6px}
+.msgview,.screen{background:#efeae2}.chatbar{background:#075e54;border:0;color:white;padding:10px 12px}.chatbar .nm strong{color:white}.chatbar .nm small{color:#cdeae1}.chatbar .btn-icon{color:white}
+.messages{background-color:#efeae2;background-image:radial-gradient(#d3cec33c 1.2px,transparent 1.2px);background-size:22px 22px;padding:16px 12px;gap:6px}
+.bubble{background:#fff;color:#222d30;align-self:flex-start;box-shadow:0 2px 3px #9994;max-width:86%;border-radius:4px 13px 13px 13px;padding:8px 10px;font-size:14px}
+.bubble.mine{background:var(--chat-mint);align-self:flex-end;border-radius:13px 4px 13px 13px}.bubble .meta{color:#6b7d7d;font-size:10px;align-items:center}.bubble .meta .ticks{font-size:12px;letter-spacing:-5px;padding-right:5px;display:inline-block;animation:tickslide .25s ease both}.bubble .meta .ticks.seen{color:#2f91c6}.bubble .meta .ticks.delivered{color:#667d86}.bubble .meta .ticks.sent{color:#849293}
+@keyframes tickslide{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:translateX(0)}}
+.composer{background:#efeae2;padding:10px 11px calc(9px + env(safe-area-inset-bottom))}.composer input{background:white!important;color:#192f2b!important;border:0!important;border-radius:25px!important;padding:13px 16px!important;box-shadow:0 1px 6px #0001}.composer .btn{border-radius:100%;min-width:51px;height:49px;font-size:13px}
+.earn-hero{background:linear-gradient(120deg,#086e66,#074a50 60%,#103c42);border:0;box-shadow:0 12px 26px #055c5250;border-radius:22px}.earn-hero h2,.earn-hero .sub{color:white}.earn-hero .earn-amount{color:#fff}.reward-topline{display:flex;align-items:center;justify-content:space-between;gap:10px}.reward-topline small{color:#d2fff1}.earn-sections{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:15px 2px 12px;position:sticky;top:0;z-index:2;background:var(--chat-paper)}.earn-sections::-webkit-scrollbar{display:none}.earn-sections button{border:1px solid #cce9dd;background:white;color:#185f50;white-space:nowrap;padding:10px 14px;font-weight:750;font-size:12px;border-radius:30px}.earn-sections button.active{background:#087b68;border-color:#087b68;color:white}.earn-category{display:none}.earn-category.active{display:block;animation:slideUp .2s ease}.earn-category .card{margin-top:9px}
+@keyframes slideUp{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+.reward-progress{width:100%;height:11px;border-radius:20px;background:#dce9e5;overflow:hidden;margin:12px 0 7px}.reward-progress>div{height:100%;width:0%;border-radius:20px;background:linear-gradient(90deg,#07b99b,#54ca74);transition:width .4s ease}.progress-main{font-size:26px;font-weight:850;color:#065f52;letter-spacing:-.8px}.progress-line{display:flex;align-items:center;justify-content:space-between;gap:7px}.claim-pill{font-size:11px;color:#217462;background:#d9f5e7;border-radius:30px;padding:6px 10px}
+.inbox-reward{background:linear-gradient(112deg,#edfaf4,#e8f6fc);border:1px solid #d4eee6;border-radius:17px;margin:12px 15px 13px;padding:13px;box-shadow:0 4px 12px #12473812}.inbox-reward .inbox-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.inbox-reward h3{margin:0;color:#0d5547;font-size:15px}.inbox-reward .inbox-balance{font-size:21px;color:#066c5a;font-weight:900}.inbox-reward .inbox-note{font-size:11px;color:#687e7c}.inbox-reward .reward-progress{margin:8px 0}.inbox-reward button{color:#08715f;border:0;background:transparent;font-size:12px;font-weight:850;padding:4px 0}
+.earn-privacy{border:1px dashed #91cdb4;border-radius:16px;padding:13px;margin:14px 0;background:#f0f9f5;color:#396f5e;font-size:12px}.earn-privacy button{color:#006e5a;background:#e0f3ea;border:1px solid #b2e1cc;border-radius:10px;padding:9px 12px;font-weight:750;margin-top:8px}
+.auth{background:linear-gradient(150deg,#0d443f,#101d34)!important}.auth .brand{cursor:default}.auth-hide-tap{position:absolute;top:0;right:0;opacity:0;width:78px;height:78px;z-index:12;border:0;background:transparent;touch-action:manipulation}
+.modalshade{z-index:50}.modal{background:#fff;color:#1e4037}.modal h2,.modal h3{color:#133d35}.modal p,.modal li{color:#547469}.modal .label{color:#315f53}.modal input,.modal select,.modal textarea{background:#f6faf8;color:#193d33;border:1px solid #bcdad0}.modal .status{background:#f2f9f6;color:#355a4f}.modal .btn{background:#087b68}.modal .light{background:#eaf7ef;color:#075e54}.modal .card{background:#f8fcfa;border-color:#dcefe6}.modal .card p{color:#4b6960}.modal .card strong{color:#173b35}
+
+/* Typing indicator retains the last message preview instead of replacing it. */
+.typing-animated,.inbox-typing{display:inline-flex;align-items:center;gap:6px;color:#18ae8d;font-size:12px;font-weight:750}
+.chatbar .typing-animated{color:#c0ffe9}
+.typing-dots{display:inline-flex;align-items:end;gap:3px;height:11px}
+.typing-dots i{display:block;width:5px;height:5px;border-radius:50%;background:currentColor;animation:funxTypingDot 1.1s infinite ease-in-out}
+.typing-dots i:nth-child(2){animation-delay:.15s}.typing-dots i:nth-child(3){animation-delay:.3s}
+@keyframes funxTypingDot{0%,55%,100%{transform:translateY(0);opacity:.35}25%{transform:translateY(-4px);opacity:1}}
+.inbox-typing{margin-top:4px}.typing-last-preview{background:#e4f8ed;color:#29624c;font-size:11px;padding:7px 14px;border-bottom:1px solid #c4ebd5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+/* FunX v4.2: keyboard-aware chat, saved reward windows and highlighted unread rows. */
+:root{--funx-chat-height:100dvh}
+html,body{height:100%;overscroll-behavior:none}
+.app{height:var(--funx-chat-height,100dvh)!important;min-height:0}
+#conversation{min-height:0;overflow:hidden}
+#conversation .chatbar,#conversation .composer{flex-shrink:0}
+#conversation .messages{flex:1 1 auto;min-height:0;overflow-y:auto;scroll-padding-bottom:12px;overscroll-behavior:contain}
+.chat-list .item.unread-chat{background:#e7fff2;border-left:4px solid #15b77c;padding-left:12px}
+.chat-list .item.unread-chat .name{font-weight:900;color:#065d45}
+.chat-list .item.unread-chat .desc{font-weight:800;color:#16493a}
+.chat-list .item.unread-chat .time{font-weight:800;color:#03875a}
+.reward-window-list{display:grid;gap:9px;margin:10px 0}
+.reward-window-row{background:#f0faf6;border:1px solid #d5ebe0;border-radius:12px;padding:9px 10px}
+.reward-window-header{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:#145d4d;font-weight:750}
+.reward-window-track{height:7px;margin-top:7px;border-radius:8px;background:#d2e6dc;overflow:hidden}
+.reward-window-track>span{display:block;background:linear-gradient(90deg,#07a588,#3cd87c);height:100%;width:0;transition:width .25s}
+.reward-window-state{font-size:10px;color:#55756b}
+#inboxReward .reward-window-row{background:#fff}
+.peer-typing-bubble{align-self:flex-start;background:#fff;border-radius:13px;padding:9px 13px;min-width:50px;color:#138878;box-shadow:0 1px 4px #0001}
+</style></head><body><div class="app" id="app">
+  <div id="intro" class="intro"><button class="intro-corner" aria-label="Continue" onclick="introCornerTap()"></button><div class="logo" aria-label="FunX"><span>F</span></div><h1>Fun<span style="color:#ce5cff">X</span></h1><div class="sub">Your Private Chatting Space</div><p class="sub">Connect. Chat. Earn with verified referrals.</p><div class="intro-percent" id="introPercent">1%</div><div class="intro-track"><div id="introProgress"></div></div><p class="sub" id="introWait" style="margin-top:17px">Preparing your experience</p><p class="sub">By Sazim Codex ldt.</p></div>
+  <div id="auth" class="auth hide"><div class="brand" onclick="adminTap()">Fun<b>X</b></div><div class="sub">By Sazim Codex ldt.</div><div class="earn-hero" style="margin-top:22px"><div class="earn-offer">FUNX · PRIVATE CHATTING & REWARDS</div><h2 style="margin:10px 0">Chat privately. Earn together.</h2><div class="earn-grid"><div><div class="earn-amount">৳100</div><div class="sub">First verified referral only</div></div><div><div class="earn-amount">৳5</div><div class="sub">Daily claim</div></div></div><div class="reward-note" style="margin-top:11px">Request withdrawal from ৳200 via bKash or Nagad · subject to verification and payout approval. No automatic cash transfer.</div></div><h2 id="authHeading">Create your account</h2><p class="sub">Find friends by their 5-character FunX ID or phone number.</p><div class="card"><div id="nameWrap"><div class="label">Full name</div><input id="authName" maxlength="48" placeholder="Your name" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></div><div class="label">Phone number</div><input id="authPhone" inputmode="tel" placeholder="+8801XXXXXXXXX" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="label">Password</div><input type="password" id="authPass" placeholder="At least 8 characters" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div id="referralWrap"><div class="label">Referral ID (optional)</div><input id="authReferral" maxlength="5" autocapitalize="characters" placeholder="Friend's 5-character FunX ID"><p class="earn-info">The inviter's ৳100 bonus is pending until the referred registration is approved by the administrator.</p></div><div id="registerNote" class="checkline"><input id="regPrivacy" type="checkbox"><span>I understand that FunX stores my account and chat messages on its server, and that the server administrator and their configured Telegram bot receive my name, phone number and FunX ID when I register. My password is never forwarded. <b>My chat contents are not forwarded to Telegram. Location sharing is separate and optional. If I enable it, the server administrator can view a recent map link while sharing is active. Wallet withdrawal details (name, bKash/Nagad number, amount) are visible to the administrator and may be sent to the configured Telegram administrator to process a requested payout. Rewards are subject to verification and funding.</b></span></div><label id="registerLocationNote" class="checkline"><input id="regShareLocation" type="checkbox" onchange="registrationShareChanged(this.checked)"><span><b>Optional: Share my live location with FunX.</b> If enabled, my registration name, phone, FunX ID, GPS position, accuracy and update time are visible to the FunX administrator, and are sent to the configured Telegram bot after the first GPS fix. Android may ask for location and notification permissions after you press Register. After registration, sharing may continue while the app is minimized with a visible ongoing notification. I can stop sharing at any time in the Location tab or the notification.</span></label><div id="regLocationStatus" class="status" role="status" aria-live="polite">Location sharing is OFF. Location access is optional. Press Register to continue; Allow or Deny will both create the account.</div><button class="btn" id="authAction" onclick="submitAuth()">Register</button><button class="switch" onclick="toggleAuth()" id="authSwitch">Already registered? Sign in</button><div class="status" id="authError" style="display:none"></div><button class="light" id="restoreSessionButton" style="display:none;width:100%" onclick="restoreSession()">Retry saved sign-in</button></div><div class="footer">English interface · FunX is independent of WhatsApp</div></div>
+  <div id="main" class="hide" style="height:100%;display:flex;flex-direction:column"><header id="mainHead" class="head"><div class="hrow"><div><div id="brandTap" class="brand" onclick="adminTap()">Fun<b>X</b></div><div class="sub">Sazim Codex ldt.</div></div><div class="hrow"><button class="btn-icon" aria-label="Search users" onclick="openModal('find')">⌕</button><button class="btn-icon" aria-label="More options" onclick="openModal('menu')">⋮</button></div></div><nav class="tabs" id="navTabs"><button data-tab="chats" class="on" onclick="goTab('chats')">Chats</button><button data-tab="updates" onclick="goTab('updates')">Updates</button><button data-tab="calls" onclick="goTab('calls')">Calls</button><button data-tab="location" onclick="goTab('location')">Location</button><button data-tab="earn" onclick="goTab('earn')">Earn</button><button data-tab="settings" onclick="goTab('settings')">Settings</button></nav></header><main class="body" id="body"></main></div>
+  <div id="conversation" class="screen hide"><div class="chatbar"><button class="btn-icon" onclick="closeChat()">‹</button><div class="avatar" id="peerAvatar">F</div><div class="nm"><strong id="peerName">Contact</strong><small id="peerStatus">Offline</small></div><button class="btn-icon" onclick="callPeer()">☎</button></div><div class="messages" id="messages"></div><div class="composer"><button class="btn-icon" onclick="document.getElementById('photoInput').click()">⊕</button><input id="photoInput" class="hide" type="file" accept="image/*" onchange="sendPhoto(event)"><input id="messageInput" autocomplete="off" placeholder="Type a message" maxlength="3000" oninput="typingNow()" onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage()}"><button class="btn" onclick="sendMessage()">Send</button></div></div>
+  <div class="modalshade hide" id="modalShade" onclick="if(event.target===this)hideModal()"><div class="modal" id="modal"></div></div><div id="toast" class="toast hide"></div>
+</div><script>
+'use strict';
+const $=id=>document.getElementById(id);const native=window.FunXNative||null;
+const store=(()=>{try{localStorage.setItem('_funx_storage_test','1');localStorage.removeItem('_funx_storage_test');return localStorage;}catch(e){const m={};return {getItem:k=>m[k]??null,setItem:(k,v)=>m[k]=String(v),removeItem:k=>delete m[k]};}})();
+const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEFAULT_SERVER='https://funx-not-configured.invalid';
+let server=store.getItem('funx_custom_server')||DEFAULT_SERVER,token='',me=null,share=false,tab='chats',chats=[],peer=null,messages=[],statusUpdates=[],lastType=0,lastAdminTap=0,adminTapCount=0,appVisible=true,livePresenceTimer=null,timer=null,signIn=false,refreshBusy=false,sessionRetrying=false;
+let registrationPermissionPending=false,registrationPermissionApproved=false,registrationSubmitWaiting=false,introProgressValue=1,introUnlocked=false,introCornerCount=0,lastIntroTap=0,bootReady=false,entryLocationOffered=false;
+function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hide');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add('hide'),3200)}
+function getToken(){return native?native.getSavedToken():store.getItem('funx_token')||''}
+function persistToken(t){if(native)return native.saveSession(server,t);if(t)store.setItem('funx_token',t);else store.removeItem('funx_token');return true}
+function clearSession(){token='';me=null;share=false;if(native){native.clearSession()}else store.removeItem('funx_token');}
+function setServer(value){const v=value.trim().replace(/\/$/,'');if(!/^https:\/\/[^\s/]+(?::\d+)?$/.test(v)&&!(location.protocol!=='file:'&&/^http:\/\/(localhost|127\.0\.0\.1)(?::\d+)?$/.test(v)))throw Error('Enter an HTTPS server URL');server=v;store.setItem('funx_custom_server',v)}
+async function api(route,options={}){if(!server||server.endsWith('.invalid'))throw Error('Server is not configured. Ask the FunX administrator to update the HTTPS address.');const headers={'Content-Type':'application/json'};if(token)headers.Authorization='Bearer '+token;if(options.adminKey)headers['X-Admin-Key']=options.adminKey;let result;
+// AbortController works on older Android WebViews that lack AbortSignal.timeout.
+const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
+try{result=await fetch(server+route,{method:options.body?'POST':'GET',headers,body:options.body?JSON.stringify(options.body):undefined,signal:controller.signal})}catch(e){throw Error('FunX server is unreachable. A Cloudflare Quick Tunnel may have changed. Ask the admin to update the server URL.')}finally{clearTimeout(timeout)}
+let payload;try{payload=await result.json()}catch(e){throw Error('Invalid server response (HTTP '+result.status+')')}if(!result.ok){const error=Error(payload.error||'Request failed ('+result.status+')');error.status=result.status;throw error}return payload}
+function finishIntro(){if(!introUnlocked||introProgressValue!==99||!bootReady)return;$('intro').classList.add('hide');if(token&&me)showApp();else $('auth').classList.remove('hide')}
+function introCornerTap(){if(introProgressValue!==99)return;const now=Date.now();introCornerCount=(now-lastIntroTap<2600)?introCornerCount+1:1;lastIntroTap=now;if(introCornerCount>=5){introCornerCount=0;introUnlocked=true;finishIntro();}}
+function beginIntroProgress(){let progress=setInterval(()=>{introProgressValue=Math.min(99,introProgressValue+2);$('introPercent').textContent=introProgressValue+'%';$('introProgress').style.width=introProgressValue+'%';if(introProgressValue===99){clearInterval(progress);$('introWait').textContent='Ready';}},45);}
+
+function serverCandidates(){let saved='';try{saved=native?.getSavedServer()||''}catch(e){}
+return [...new Set([server,DEFAULT_SERVER,saved].filter(x=>/^https:\/\/[^\s/]+$/.test(x)&&!x.endsWith('.invalid')))];}
+async function restoreSession(){if(sessionRetrying)return;sessionRetrying=true;const button=$('restoreSessionButton');if(button){button.disabled=true;button.textContent='Reconnecting to saved session...'}
+let reachable=false,rejected=false,lastError='';
+try{token=getToken();if(!token){if(button)button.style.display='none';return false}
+for(const candidate of serverCandidates()){server=candidate;try{const a=await api('/api/me');me=a.user;share=!!a.sharing;persistToken(token);store.setItem('funx_custom_server',server);$('authError').style.display='none';if(button)button.style.display='none';return true}
+catch(e){lastError=e.message;if(e.status===401){reachable=true;rejected=true}else if(e.status)reachable=true}}
+if(reachable&&rejected){errorAuth('Your saved session was rejected by the server. Sign in once to reconnect; your account remains on the server.')}else{errorAuth(lastError||'Server offline. Your saved sign-in is preserved; tap Retry when it reconnects.');}
+if(button)button.style.display='block';return false}
+finally{sessionRetrying=false;if(button){button.disabled=false;button.textContent='Retry saved sign-in'}}}
+async function findWorkingServer(){const old=server;for(const candidate of serverCandidates()){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),4000);try{const res=await fetch(candidate+'/health',{signal:controller.signal,cache:'no-store'});if(res.ok&&(await res.json()).service==='FunX'){server=candidate;if(candidate!==old)store.setItem('funx_custom_server',candidate);return true}}catch(e){}finally{clearTimeout(timeout)}}return false}
+async function boot(){beginIntroProgress();token=getToken();if(token){const restored=await restoreSession();if(!restored)await findWorkingServer()}else await findWorkingServer();bootReady=true;if(introUnlocked)finishIntro();}
+function toggleAuth(){signIn=!signIn;$('authHeading').textContent=signIn?'Welcome back':'Create your account';$('nameWrap').classList.toggle('hide',signIn);$('registerNote').classList.toggle('hide',signIn);$('referralWrap').classList.toggle('hide',signIn);$('registerLocationNote').classList.toggle('hide',signIn);$('regLocationStatus').classList.toggle('hide',signIn);$('authAction').textContent=signIn?'Sign in':'Register';$('authSwitch').textContent=signIn?'Create a new account':'Already registered? Sign in';$('authError').style.display='none'}
+function registrationShareChanged(checked){
+  registrationPermissionApproved=false;
+  $('regLocationStatus').textContent=checked?'Location sharing selected. Android will ask for permission after Register. You may deny and still register.':'Location sharing is OFF. Registration is available without location.';
+}
+window.funxRegistrationPermissionResult=function(granted){
+  registrationPermissionPending=false;
+  registrationPermissionApproved=granted===true;
+  $('regLocationStatus').textContent=granted?'Android permission granted. Sharing only starts if you selected it.':'Permission denied. Registration is still available and location sharing stays OFF.';
+  if(registrationSubmitWaiting){registrationSubmitWaiting=false;void submitAuth(true);}
+};
+async function startRegistrationLocationSharing(){
+  if(!native||!registrationPermissionApproved||!$('regShareLocation').checked)return false;
+  if(!nativeState().permission)throw Error('Android location permission is not available');
+  await api('/api/location-consent',{body:{enabled:true}});
+  if(!native.saveSession(server,token)){
+    await api('/api/location-consent',{body:{enabled:false}}).catch(()=>{});
+    throw Error('Could not save the secure location session');
+  }
+  native.setRemoteEnabled(true);
+  native.enableTracking();
+  share=true;
+  return true;
+}
+function errorAuth(s){$('authError').textContent=s;$('authError').style.display='block'}
+async function submitAuth(permissionResolved=false){try{
+  if(!signIn&&!permissionResolved&&native&&typeof native.requestRegistrationLocationPermission==='function'&&!nativeState().permission){
+    registrationPermissionPending=true;registrationSubmitWaiting=true;
+    $('regLocationStatus').textContent='Waiting for your Android location permission choice. Allow or Deny to continue registration.';
+    native.requestRegistrationLocationPermission();return;
+  }
+  if(!signIn&&nativeState().permission)registrationPermissionApproved=true;
+  if(!server)throw Error('FunX service is unavailable. Please try again later.');
+  if(!signIn&&!$('regPrivacy').checked)throw Error('Read and accept the account privacy notice.');
+  if(!signIn&&registrationPermissionPending)throw Error('Complete or deny the Android location prompt first.');
+  const wantsRegistrationSharing=!signIn&&$('regShareLocation').checked&&registrationPermissionApproved;
+  const payload={phone:$('authPhone').value.trim(),password:$('authPass').value};
+  if(!signIn){payload.name=$('authName').value.trim();payload.locationOptIn=wantsRegistrationSharing;payload.referralCode=$('authReferral').value.trim().toUpperCase();}
+  const r=await api(signIn?'/api/login':'/api/register',{body:payload});
+  token=r.token;me=r.user;share=!!r.sharing;if(!persistToken(token))toast('Signed in, but secure session storage failed. Future restarts may require sign-in.');
+  let message='Welcome to FunX!';
+  if(wantsRegistrationSharing){
+    try{await startRegistrationLocationSharing();message='Account created. Waiting for a GPS fix; the admin map and Telegram update will appear only after the first location is delivered.'}
+    catch(e){
+      share=false;
+      try{native?.setRemoteEnabled(false);native?.disableTracking()}catch(ignored){}
+      await api('/api/location-consent',{body:{enabled:false}}).catch(()=>{});
+      message='Account created, but location sharing is OFF: '+e.message;
+    }
+  }
+  $('auth').classList.add('hide');showApp();toast(message);
+}catch(e){errorAuth(e.message)}}
+function showApp(){$('main').classList.remove('hide');$('auth').classList.add('hide');goTab('chats');if(!timer)timer=setInterval(poll,3600);poll();
+  if(!entryLocationOffered){entryLocationOffered=true;try{if(native&&!nativeState().permission&&store.getItem('funx_skip_entry_permission')!=='yes')setTimeout(()=>openModal('entryLocation'),450);}catch(e){}}
+}
+function activeVisibility(visible){
+ appVisible=visible;
+ if(!me||!token)return;
+ if(!visible){api('/api/heartbeat',{body:{active:false}}).catch(()=>{});return;}
+ void poll();
+}
+window.funxNativeAppVisibility=activeVisibility;
+if(typeof document.addEventListener==='function')document.addEventListener('visibilitychange',()=>activeVisibility(!document.hidden));
+if(typeof window.addEventListener==='function')window.addEventListener('pagehide',()=>activeVisibility(false));
+function requestOptionalEntryLocation(){hideModal();if(native&&typeof native.requestRegistrationLocationPermission==='function')native.requestRegistrationLocationPermission();else toast('Location permission is available in Android FunX only');}
+function hideEntryLocationForever(){store.setItem('funx_skip_entry_permission','yes');hideModal();}
+
+function goTab(next){tab=next;peer=null;$('conversation').classList.add('hide');$('main').classList.remove('hide');document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===next));renderTab()}
+function renderTab(){let body=$('body');if(tab==='chats'){body.innerHTML=`<div class="search"><input id="filterChats" placeholder="Search your chats" oninput="renderChats()"><button class="btn" onclick="openModal('find')">Find</button></div><div class="list" id="chatList"></div><button class="FAB" onclick="openModal('find')">+</button>`;renderChats()}
+else if(tab==='updates'){body.innerHTML=`<div class="section"><div class="hrow"><h2>Updates</h2><button class="btn" onclick="openModal('status')">Add Status</button></div><p class="sub">Statuses are shared with signed-in FunX users and expire after 24 hours.</p><div id="statusList"></div></div>`;renderStatuses();}
+else if(tab==='calls'){body.innerHTML=`<div class="section"><h2>Calls</h2><p class="sub">FunX can open your phone dialer. In-app voice/video calls are not implemented.</p><button class="btn" onclick="openModal('dial')">Open Dialer</button><div id="callList"></div></div>`;renderCalls();}
+else if(tab==='location'){body.innerHTML=`<div class="section"><h2>Live Location</h2><div class="card"><span class="pill">Consent controlled</span><p>Only if you opt in, FunX shares GPS while this app is open so the administrator may view a recent Google Maps link; its configured Telegram administrator can receive updates. GPS stops when you leave FunX and resumes on entry only with your saved sharing consent; a visible notification is shown during sharing. You can stop anytime.</p><div class="status" id="locationState">Loading location state...</div><div class="actions"><button class="btn" onclick="openModal('consent')">Start Sharing</button><button class="danger" onclick="stopSharing()">Stop Sharing</button></div></div><div class="card"><h3>My location</h3><div class="locationline">Latitude: <span id="lat">—</span></div><div class="locationline">Longitude: <span id="lng">—</span></div><div class="locationline">Last updated: <span id="updated">—</span></div><div id="uploadStatus" class="status">Waiting for location status...</div><div class="spacer"></div><button class="light" onclick="openOwnMap()">View on Map</button></div></div>`;renderLocation()}
+else if(tab==='earn'){renderEarnTab();}
+else if(tab==='settings'){body.innerHTML=`<div class="section"><h2>My Profile</h2><div class="card"><div class="hrow"><div class="avatar">${safe(me?.name?.[0]||'F')}</div><div style="flex:1"><strong>${safe(me?.name||'')}</strong><p style="margin:4px 0">${safe(me?.phone||'')}</p></div></div><div class="label">Your unique 5-character FunX ID</div><div class="code">${safe(me?.code||'')}</div><button class="light" onclick="copyCode()">Copy ID</button></div><div class="card"><h3>App Settings</h3><p>FunX connects automatically. You do not need to enter a server address.</p><div class="actions"><button class="light" onclick="goTab('location')">Location Sharing</button></div></div><div class="card"><h3>Privacy</h3><p>Messages are stored on the FunX server. They are not end-to-end encrypted. Chat typing and read status are shown only to conversation participants. Location is off until separately enabled.</p><button class="danger" onclick="logout()">Sign Out</button></div><div class="footer">FunX v4.1 · By Sazim Codex ldt.</div></div>`;}}
+function money(paisa){return '৳'+(Number(paisa||0)/100).toFixed(2)}
+function renderEarnTab(){const body=$('body');body.innerHTML=`<div class="section"><div class="earn-hero"><span class="pill">FunX Rewards</span><h2 style="margin:12px 0 4px">Chat. Refer. Earn.</h2><p class="sub">Personal chatting service with optional loyalty rewards.</p><div class="earn-amount" id="earnBalance">Checking wallet...</div><div class="sub">Available promotional balance</div></div>
+<div class="earn-grid" style="margin:12px 0"><div class="card"><b>৳100</b><p>First verified referral</p></div><div class="card"><b>৳5</b><p>Once every Dhaka day</p></div></div>
+<div class="card"><h3>60-Minute Activity Reward</h3><p>Stay active in FunX for 60 minutes per Dhaka day (chatting counts). The server tracks foreground active time. Claim ৳20 once when eligible.</p><div id="activityProgress" class="status">Checking active minutes...</div><button class="btn" id="activityClaimBtn" onclick="activityClaim()">Claim ৳20</button></div><div class="card"><h3>Daily Reward</h3><p>Claim ৳5 once a day. Your account must be in good standing.</p><button class="btn" id="dailyClaimBtn" onclick="dailyClaim()">Claim ৳5</button><div class="status" id="dailyClaimStatus">Loading...</div></div>
+<div class="card"><h3>Refer a friend</h3><div class="code">${safe(me?.code||'')}</div><p>Share your FunX ID. Your first completed eligible referral can earn ৳100 after admin verification. Later referrals do not pay additional referral bonuses.</p><button class="light" onclick="copyCode()">Copy Referral ID</button><div id="pendingReferrals" class="status">Checking referrals...</div></div>
+ <div class="card"><h3>Save your 2 payout wallets</h3><p>Save one bKash number and one Nagad number. Changes require your login password.</p>
+ <div class="label">Wallet provider</div><select id="savePayoutMethod" style="width:100%;padding:12px;background:#182441;color:white;border-radius:12px"><option value="bkash">bKash</option><option value="nagad">Nagad</option></select>
+ <div class="label">Account holder</div><input id="savePayoutHolder" maxlength="80" placeholder="Name on wallet account">
+ <div class="label">Wallet number</div><input id="savePayoutNumber" inputmode="tel" placeholder="01XXXXXXXXX" maxlength="11">
+ <div class="label">Your FunX login password</div><input id="savePayoutPassword" type="password" placeholder="Confirm password" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+ <button class="light" onclick="savePayoutWallet()" style="margin-top:12px;width:100%">Save / Update Wallet</button>
+ <div id="walletSlots" class="status">Loading saved wallets...</div></div>
+ <div class="card"><h3>Withdraw to bKash / Nagad</h3><p>Minimum withdrawal ৳200. Payout requests are manually reviewed, and no transfer is automatic.</p>
+ <div class="label">Select a saved wallet</div><select id="payoutWalletId" style="width:100%;padding:12px;background:#182441;color:white;border-radius:12px"><option value="">Save a wallet first</option></select>
+ <div class="label">Withdraw amount (BDT)</div><input id="payoutAmount" type="number" min="200" max="100000" step="1" placeholder="200">
+ <div class="label">Your FunX login password</div><input id="withdrawPassword" type="password" placeholder="Confirm withdrawal" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+ <button class="btn" onclick="requestWithdrawal()" style="margin-top:14px;width:100%">Submit withdrawal request</button>
+ <div id="payoutMessage" class="status">Never share your wallet PIN, OTP or login password with anyone.</div></div>
+<div class="card"><h3>Withdrawal history</h3><div id="payoutHistory" class="sub">Loading...</div></div>
+<p class="earn-info">Reward eligibility and payment are subject to actual funding, verification and program terms. This is not a payment provider; only an approved manual transfer completes a payout.</p></div>`;void refreshEarn();}
+async function refreshEarn(){try{const r=await api('/api/wallet');if(tab!=='earn')return;const w=r.wallet;
+$('earnBalance').textContent=money(w.balancePaisa);
+$('dailyClaimStatus').textContent=w.dailyClaimedToday?'Claimed today · next claim on the next Dhaka calendar day':'Ready to claim ৳5 today';
+$('dailyClaimBtn').disabled=w.dailyClaimedToday;
+ $('activityProgress').textContent='Foreground activity today: '+Math.floor((w.activitySeconds||0)/60)+' / 60 minutes'+(w.activityClaimedToday?' · Claimed today':'');
+ $('activityClaimBtn').disabled=w.activityClaimedToday||w.activitySeconds<w.activityRequiredSeconds;
+ $('walletSlots').textContent=w.payoutWallets.length?w.payoutWallets.map(x=>x.method.toUpperCase()+': '+x.number+' ('+x.holder+')').join(' · '):'No wallet saved yet';
+ const walletSelect=$('payoutWalletId'),priorWallet=walletSelect.value;walletSelect.innerHTML='<option value="">Select wallet</option>'+w.payoutWallets.map(x=>'<option value="'+safe(x.id)+'">'+safe(x.method.toUpperCase()+' · '+x.number)+'</option>').join('');if(w.payoutWallets.some(x=>x.id===priorWallet))walletSelect.value=priorWallet;else if(w.payoutWallets.length===1)walletSelect.value=w.payoutWallets[0].id;
+$('pendingReferrals').textContent='Pending referral rewards: '+money(w.pendingReferralPaisa)+' · Referred registrations: '+w.referralHistory.length;
+$('payoutHistory').innerHTML=w.withdrawals.length?w.withdrawals.map(x=>`<p>${safe(x.method.toUpperCase())} · ${safe(x.number)} · ${money(x.amountPaisa)} · ${safe(x.status)}</p>`).join(''):'No withdrawal requests yet.';
+}catch(e){if($('earnBalance'))$('earnBalance').textContent='Unavailable';toast(e.message)}}
+async function dailyClaim(){const b=$('dailyClaimBtn');b.disabled=true;try{await api('/api/wallet/daily-claim',{body:{}});toast('৳5 daily reward claimed');await refreshEarn()}catch(e){toast(e.message);b.disabled=false}}
+async function activityClaim(){const btn=$('activityClaimBtn');btn.disabled=true;try{await api('/api/wallet/activity-claim',{body:{}});toast('৳20 activity reward claimed');await refreshEarn()}catch(e){toast(e.message);await refreshEarn()}}
+async function savePayoutWallet(){try{
+ const r=await api('/api/wallet/accounts',{body:{method:$('savePayoutMethod').value,number:$('savePayoutNumber').value.trim(),holder:$('savePayoutHolder').value.trim(),password:$('savePayoutPassword').value}});
+ $('savePayoutPassword').value='';toast('Saved payout wallet securely');await refreshEarn();
+ }catch(e){$('savePayoutPassword').value='';toast(e.message)}}
+async function requestWithdrawal(){const note=$('payoutMessage');note.textContent='Submitting request...';try{
+ const payload={walletId:$('payoutWalletId').value,amountBDT:Number($('payoutAmount').value),password:$('withdrawPassword').value};
+ const r=await api('/api/wallet/withdraw',{body:payload});$('withdrawPassword').value='';note.textContent='Request recorded: '+r.request.id+' · Pending manual review. No transfer has happened yet.';await refreshEarn();
+}catch(e){$('withdrawPassword').value='';note.textContent=e.message}}
+async function adminRewards(){const out=$('adminRewards');if(!out)return;try{
+ const key=$('adminSecret').value.trim();if(!key)throw Error('Enter Server Admin Secret first');const r=await api('/api/admin/rewards',{adminKey:key});
+ const referrals=r.pendingReferrals.map(x=>`<div class="card"><b>Referral · ${safe(x.invitee?.code)} → ${safe(x.inviter?.code)}</b><p>Verify the referred person is genuinely eligible before crediting ৳100.</p><button class="btn" onclick="rewardAction('approveReferral','${x.id}')">Approve referral</button> <button class="danger" onclick="rewardAction('rejectReferral','${x.id}')">Reject</button></div>`).join('')||'<p>No pending referrals.</p>';
+ const payouts=r.withdrawals.map(x=>`<div class="card"><b>${safe(x.member?.name||'')} · ${safe(x.method)}</b><p>৳${x.amountPaisa/100} · ${safe(x.number)} · ${safe(x.holder)} · ${safe(x.status)}</p>${x.status==='pending'?`<button class="btn" onclick="rewardAction('paidWithdrawal','${x.id}')">Mark paid after actual transfer</button> <button class="danger" onclick="rewardAction('rejectWithdrawal','${x.id}')">Reject & refund balance</button>`:''}</div>`).join('')||'<p>No withdrawal requests.</p>';
+ out.innerHTML='<h4>Pending referral verification</h4>'+referrals+'<h4>Withdrawal requests</h4>'+payouts;
+}catch(e){out.textContent=e.message}}
+async function rewardAction(action,id){if((action==='paidWithdrawal')&&!confirm('Have you actually transferred the money outside FunX?'))return;
+ try{await api('/api/admin/rewards/action',{adminKey:$('adminSecret').value.trim(),body:{action,id}});await adminRewards();toast('Record updated')}catch(e){toast(e.message)}}
+function renderChats(){let el=$('chatList');if(!el)return;const query=$('filterChats')?.value.toLowerCase()||'';const list=chats.filter(x=>x.peer.name.toLowerCase().includes(query)||x.peer.code.toLowerCase().includes(query));el.innerHTML=list.map(x=>`<div class="item" onclick="openChat('${x.peer.id}')"><div class="avatar">${safe(x.peer.name[0])}</div><div class="content"><div class="name">${safe(x.peer.name)}</div><div class="desc">${x.last?.from===me.id?'✓ ':''}${safe(x.last?.type==='image'?'📷 Photo':x.last?.text||x.peer.code)}</div></div><div class="time">${x.last?new Date(x.last.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):''}</div></div>`).join('')||'<div class="empty"><div class="big">💬</div><strong>No chats yet</strong>Find someone by phone number or FunX ID to begin.</div>'}
+function renderStatuses(){const el=$('statusList');if(el)el.innerHTML=statusUpdates.map(s=>`<div class="card"><b>${safe(s.name)}</b><div class="sub">${new Date(s.at).toLocaleString('en-GB')}</div><p>${safe(s.text)}</p></div>`).join('')||'<div class="empty">No updates yet.</div>'}
+function renderCalls(){const el=$('callList');if(el)el.innerHTML=chats.map(c=>`<div class="item"><div class="avatar">${safe(c.peer.name[0])}</div><div class="content"><b>${safe(c.peer.name)}</b><div class="sub">${safe(c.peer.phone)}</div></div><button class="light" onclick="dial('${safe(c.peer.phone)}')">☎</button></div>`).join('')}
+function openChat(id){peer=(chats.find(x=>x.peer.id===id)||{}).peer||peer;if(!peer||peer.id!==id)return;$('main').classList.add('hide');$('conversation').classList.remove('hide');$('peerName').textContent=peer.name;$('peerAvatar').textContent=peer.name[0];$('messageInput').value='';loadMessages()}
+function closeChat(){if(peer)api('/api/typing',{body:{peer:peer.id,typing:false}}).catch(()=>{});peer=null;goTab('chats')}
+async function loadMessages(){if(!peer)return;let target=peer.id;try{const r=await api('/api/messages?peer='+encodeURIComponent(target));if(peer?.id!==target)return;messages=r.messages;$('peerStatus').textContent=r.typing?'Typing…':r.online?'Online':'Offline';renderMessages();await api('/api/read',{body:{peer:target}});}catch(e){toast(e.message)}}
+function renderMessages(){let el=$('messages');if(!el)return;let last=el.lastElementChild?.dataset?.mid;el.innerHTML=messages.map(m=>`<div class="bubble ${m.from===me.id?'mine':''}" data-mid="${m.id}">${m.type==='image'?`<img alt="Shared photo" src="${safe(m.text)}">`:safe(m.text)}<div class="meta">${new Date(m.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} ${m.from===me.id?`<span class="${m.read?'read':''}">${m.read?'✓✓':'✓'}</span>`:''}</div></div>`).join('');if(el.lastElementChild?.dataset.mid!==last)el.scrollTop=el.scrollHeight}
+async function sendMessage(){let input=$('messageInput'),text=input.value.trim();if(!text||!peer)return;let to=peer.id;input.value='';try{await api('/api/message',{body:{to,text,type:'text'}});await api('/api/typing',{body:{peer:to,typing:false}});await loadMessages();}catch(e){input.value=text;toast(e.message)}}
+async function sendPhoto(ev){let file=ev.target.files?.[0];ev.target.value='';if(!file||!peer)return;if(!/^image\//.test(file.type)||file.size>6e6)return toast('Choose an image under 6 MB');let to=peer.id,im=new Image(),reader=new FileReader();reader.onload=()=>{im.onload=async()=>{try{const cv=document.createElement('canvas');let scale=Math.min(1,540/Math.max(im.width,im.height));cv.width=Math.round(im.width*scale);cv.height=Math.round(im.height*scale);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);let data=cv.toDataURL('image/jpeg',.55);if(data.length>200000)throw Error('Compressed image is over 150 KB');await api('/api/message',{body:{to,text:data,type:'image'}});if(peer?.id===to)loadMessages()}catch(e){toast(e.message)}};im.src=reader.result};reader.readAsDataURL(file)}
+function typingNow(){if(!peer||Date.now()-lastType<1600)return;lastType=Date.now();api('/api/typing',{body:{peer:peer.id,typing:true}}).catch(()=>{})}
+function callPeer(){if(peer)dial(peer.phone)}function dial(phone){if(native)native.dialNumber(phone);else toast('Phone dialer is available in the Android app')}
+async function poll(){if(!me||!server||refreshBusy||document.hidden||!appVisible)return;refreshBusy=true;try{await api('/api/heartbeat',{body:{active:true}});let r=await api('/api/chats');chats=r.chats;if(tab==='chats'&&!peer)renderChats();if(peer)await loadMessages();if(tab==='updates'){const s=await api('/api/statuses');statusUpdates=s.statuses;renderStatuses();}if(tab==='location')renderLocation();if(tab==='earn')await refreshEarn()}catch(e){if(e.status===401)toast('Your session needs to be renewed. Sign in once again if it remains expired.')}finally{refreshBusy=false}}
+async function findUser(){const q=$('findQuery').value.trim();try{const r=await api('/api/search?q='+encodeURIComponent(q));$('findResult').innerHTML=r.users.map(u=>`<div class="item" onclick="startPeer('${u.id}')"><div class="avatar">${safe(u.name[0])}</div><div class="content"><div class="name">${safe(u.name)}</div><div class="desc">ID: ${safe(u.code)}${u.phone?' · '+safe(u.phone):''}</div></div><span class="green">Chat ›</span></div>`).join('')||'<p>No matching member yet. Check the full FunX ID or phone number.</p>';}catch(e){$('findResult').textContent=e.message}}
+function startPeer(id){let el=$('findResult').querySelector(`[onclick="startPeer('${id}')"]`);if(!el)return;let name=el.querySelector('.name').textContent;let desc=el.querySelector('.desc').textContent;let phone=desc.includes(' · ')?desc.split(' · ').at(-1):'';let code=desc.slice(4,9);peer={id,name,phone,code};hideModal();openChat(id)}
+async function saveStatus(){let text=$('newStatus').value.trim();try{await api('/api/statuses',{body:{text}});hideModal();const r=await api('/api/statuses');statusUpdates=r.statuses;renderStatuses();toast('Status published')}catch(e){toast(e.message)}}
+function copyCode(){if(navigator.clipboard?.writeText)navigator.clipboard.writeText(me.code).then(()=>toast('FunX ID copied'));else toast('Your ID: '+me.code)}
+async function logout(){if(!confirm('Sign out of FunX?'))return;await stopSharing();try{await api('/api/logout',{body:{}})}catch(e){}clearSession();peer=null;chats=[];$('main').classList.add('hide');$('conversation').classList.add('hide');$('auth').classList.remove('hide');toast('Signed out')}
+function nativeState(){try{return native?JSON.parse(native.getLocationState()):{requested:false,running:false,remoteEnabled:false,latitude:'',longitude:'',timestamp:0,remoteSent:0}}catch(e){return {}}}
+function renderLocation(){let s=nativeState();let st=$('locationState');if(st)st.textContent=share&&s.running?'Sharing active · visible Android notification':share?'Location sharing enabled. Waiting for GPS/service.':'Location sharing is OFF';if($('lat'))$('lat').textContent=s.latitude||'—';if($('lng'))$('lng').textContent=s.longitude||'—';if($('updated'))$('updated').textContent=s.timestamp?new Date(s.timestamp).toLocaleString('en-GB'):'Not available';if($('uploadStatus'))$('uploadStatus').textContent='Android permission: '+(s.permission?'Granted':'Not granted')+' · GPS service: '+(s.running?'Running':'Stopped')+' · Last server delivery: '+(s.remoteSent?new Date(s.remoteSent).toLocaleString('en-GB'):'Not received yet')+(s.remoteError?' · Error: '+s.remoteError:'')}
+async function approveShare(){if(!$('confirmShare').checked)return toast('Consent is required to start sharing.');try{if(!native)throw Error('GPS sharing requires the installed Android app');if(!token||!server)throw Error('Sign in first');await api('/api/location-consent',{body:{enabled:true}});share=true;const ok=native.saveSession(server,token);if(!ok)throw Error('HTTPS server or login session could not be saved');native.setRemoteEnabled(true);native.enableTracking();hideModal();goTab('location');toast('Sharing requested. Approve the Android permissions.')}catch(e){share=false;api('/api/location-consent',{body:{enabled:false}}).catch(()=>{});toast(e.message)}}
+async function stopSharing(){if(native){native.disableTracking();native.setRemoteEnabled(false)}try{if(token&&server)await api('/api/stop',{body:{}})}catch(e){toast('Sharing stopped on phone; server could not be reached')}share=false;renderLocation()}
+function openOwnMap(){const s=nativeState();if(s.latitude&&s.longitude){if(native)native.openMap();else window.open('https://maps.google.com/?q='+s.latitude+','+s.longitude,'_blank')}else toast('No location yet')}
+function adminTap(){let now=Date.now();adminTapCount=(now-lastAdminTap<2500)?adminTapCount+1:1;lastAdminTap=now;if(adminTapCount>=5){adminTapCount=0;openModal('adminPin')}}
+function hideModal(){if(livePresenceTimer){clearInterval(livePresenceTimer);livePresenceTimer=null;}$('modalShade').classList.add('hide')}
+function openModal(type){if(type!=='admin'&&livePresenceTimer){clearInterval(livePresenceTimer);livePresenceTimer=null;}$('modalShade').classList.remove('hide');let v='<h2>FunX</h2>';
+
+if(type==='find')v=`<h2>Find a person</h2><p>Enter the exact 5-character FunX ID or registered phone number.</p><input id="findQuery" maxlength="20" placeholder="e.g. A7K5P or +8801..."><button class="btn" onclick="findUser()">Search</button><div id="findResult"></div>`;
+if(type==='status')v=`<h2>New Status</h2><p>This update is visible to FunX members for 24 hours.</p><textarea id="newStatus" maxlength="320" placeholder="What's happening?"></textarea><button class="btn" onclick="saveStatus()">Publish</button>`;
+if(type==='dial')v=`<h2>Open Dialer</h2><input id="dialValue" inputmode="tel" placeholder="Phone number"><button class="btn" onclick="dial($('dialValue').value)">Open Phone Dialer</button>`;
+if(type==='menu')v=`<h2>FunX Options</h2><div class="actions"><button class="light" onclick="hideModal();goTab('settings')">Settings</button><button class="light" onclick="hideModal();goTab('location')">Live Location</button></div>`;
+if(type==='consent')v=`<h2>Live Location Sharing</h2><p><b>Your choice matters.</b> When you enable this feature, FunX will request Android location and notification permissions. Your GPS coordinates, accuracy and time will be sent to your FunX server. The administrator can view a recent Google Maps link in the admin panel, and a configured Telegram administrator can receive updates. GPS updates run only while FunX is open in the foreground and show a visible Android notification. Leaving the app pauses GPS updates; reopening resumes only if your sharing choice remains enabled.</p><p>Location sharing is optional and can be stopped in the app or by revoking Android permissions. You can turn off sharing in FunX or revoke Android permission at any time.</p><label class="checkline"><input id="confirmShare" type="checkbox"><span>I agree to share my location with the FunX server and its administrator (including map links), and its Telegram administrator if configured, while I am actively using FunX, until I turn off sharing.</span></label><button class="btn" onclick="approveShare()">Agree and Start Sharing</button><button class="light" onclick="hideModal()">Not Now</button>`;
+if(type==='entryLocation')v=`<h2>Optional Location Access</h2><p>FunX does not require your location to chat or earn rewards. You may allow Android location access now or later. <b>Granting Android permission alone does not share your GPS with an administrator.</b> Sharing must be explicitly turned on in the Location page and can be stopped any time.</p><button class="btn" onclick="requestOptionalEntryLocation()">Choose Android Permission</button><button class="light" onclick="hideModal()">Not Now</button><button class="light" onclick="hideEntryLocationForever()">Don't Ask Again</button>`;
+if(type==='adminPin')v=`<h2>FunX Admin</h2><p>Enter the local access PIN.</p><input type="password" id="adminPin" placeholder="Admin PIN" inputmode="numeric" maxlength="12" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><button class="btn" onclick="unlockAdmin()">Continue</button>`;
+if(type==='admin')v=`<h2>FunX Admin Panel</h2><p>This panel requires the server's strong admin secret to view other users' opted-in locations or manage the Telegram bot. The PIN alone is not sufficient.</p><div class="label">Server Admin Secret</div><input type="password" id="adminSecret" placeholder="Server secret from server/.env" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="card"><h3>Registration & Consented Live Location</h3><p>View each registration, including phone and ID, and the first GPS link after explicit permission. Passwords are never shown.</p><p>Only members who voluntarily enabled location sharing are shown. Maps links appear only for GPS updates received during the last 10 minutes. Never assume an old location is live.</p><button class="btn" onclick="loadAdminLocations()">Refresh Sharing & Maps Links</button><div id="adminLocations" class="status">Enter Server Admin Secret and refresh to view registrations and permitted locations.</div></div><div class="card"><h3>Member Activity & Last Seen</h3><p>Online is approximate; it uses recent foreground heartbeat timestamps. Location links are only available when that member explicitly agreed to share. Last GPS is not a live feed.</p><button class="light" onclick="loadAdminPresence()">Refresh Active / Last Seen</button><button class="light" id="presenceMonitorBtn" onclick="togglePresenceMonitor()">Start 10s Live Monitor</button><div id="adminPresence" class="status">Refresh to view activity</div></div><div class="card"><h3>Server Settings (Admin Only)</h3><p>FunX connects automatically for regular users. This quick-tunnel URL is temporary; use a stable HTTPS domain for real deployments.</p><div class="label">HTTPS API URL</div><input id="adminServerValue" autocomplete="off" value="${safe(server)}" placeholder="https://your-server.example"><button class="light" onclick="saveServer()">Save Server</button><div id="serverResult" class="status">This device is using an admin override. New installations use the server address packaged at build time.</div></div><div class="card"><h3>Rewards & Withdrawal Review</h3><p>Referral rewards require verification. Payout status must reflect real money transfers done outside FunX.</p><button class="light" onclick="adminRewards()">Refresh Reward Requests</button><div id="adminRewards" class="status">Use Server Admin Secret and refresh.</div></div><div class="card"><h3>Telegram Bot</h3><div class="label">Bot Token</div><input type="password" id="botToken" placeholder="BotFather token" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><div class="label">Telegram Chat ID</div><input id="botChat" inputmode="numeric" placeholder="Owner Chat ID"><div class="actions"><button class="btn" onclick="botAction('save')">Save & Activate</button><button class="danger" onclick="botAction('delete')">Delete Token</button><button class="light" onclick="botAction('test')">Send Test</button><button class="light" onclick="botInfo()">Check Status</button></div><div class="status" id="botResult">Bot token is stored on the server, not in the app.</div></div>`;
+$('modal').innerHTML=v;}
+function unlockAdmin(){if($('adminPin').value!=='0011')return toast('Incorrect PIN');openModal('admin')}
+async function botAction(action){try{let adminKey=$('adminSecret').value;let b={action};if(action==='save'){b.token=$('botToken').value.trim();b.chatId=$('botChat').value.trim()}let r=await api('/api/admin/bot',{adminKey,body:b});$('botResult').textContent='Done: '+(action==='save'?'Bot token securely saved':action==='delete'?'Bot token deleted':'Test delivered');$('botToken').value='';}catch(e){$('botResult').textContent=e.message}}
+async function botInfo(){try{let r=await api('/api/admin/config',{adminKey:$('adminSecret').value});$('botResult').textContent=`Bot configured: ${r.configured?'Yes':'No'} | Accounts: ${r.accounts} | Location sharing: ${r.sharing}`;}catch(e){$('botResult').textContent=e.message}}
+async function loadAdminLocations(){const out=$('adminLocations');if(!out)return;out.textContent='Checking the FunX server...';try{const key=$('adminSecret').value.trim();if(!key)throw Error('Enter Server Admin Secret first.');const r=await api('/api/admin/locations',{adminKey:key});
+const status=r.summary||{},info=`Location sharing enabled: ${status.enabled||0} · Recent GPS maps: ${r.locations.length} · Waiting for GPS: ${status.waiting||0} · Older than 10 min: ${status.stale||0}`;
+const enrolled=(r.registrations||[]).map(x=>{
+  const latest=x.updated?new Date(x.updated).toLocaleString('en-GB'):'No GPS received yet';
+  const status=x.status==='active'?'ACTIVE · recent GPS':x.status==='waiting'?'GPS PENDING':x.status==='stale'?'STALE · not live':'Location sharing OFF';
+  return `<div class="card"><strong>${safe(x.name)} · ${safe(x.code)}</strong><p>Phone: ${safe(x.phone)}<br>Registered: ${safe(new Date(x.registeredAt).toLocaleString('en-GB'))}<br>Location status: ${safe(status)}</p><div class="sub">Last GPS: ${safe(latest)}</div>${x.mapsUrl&&x.status==='active'?`<p><a href="${safe(x.mapsUrl)}" target="_blank" rel="noopener noreferrer">Open Google Maps · last 10 min</a></p>`:''}</div>`;
+}).join('');
+out.innerHTML=`<strong>${safe(info)}</strong><p>${r.locations.length?'GPS Maps links are shown only when a recent permitted GPS fix was actually received.':'GPS Pending means permission was selected but coordinates have not arrived; inspect the user device’s Location tab for delivery errors.'}</p>`+(enrolled||'<p>No registrations found on this server.</p>');
+}catch(e){out.textContent=e.message}}
+function togglePresenceMonitor(){
+ const btn=$('presenceMonitorBtn');if(!btn)return;
+ if(livePresenceTimer){clearInterval(livePresenceTimer);livePresenceTimer=null;btn.textContent='Start 10s Live Monitor';return;}
+ if(!$('adminSecret')?.value.trim())return toast('Enter Server Admin Secret first');
+ void loadAdminPresence();livePresenceTimer=setInterval(()=>{if(!$('adminPresence')){clearInterval(livePresenceTimer);livePresenceTimer=null;return}void loadAdminPresence()},10000);btn.textContent='Stop Live Monitor';
+}
+function relativeLast(ms){if(!ms)return 'Not recorded';const s=Math.max(0,Math.floor((Date.now()-ms)/1000));if(s<60)return s+' sec ago';if(s<3600)return Math.floor(s/60)+' min ago';if(s<86400)return Math.floor(s/3600)+' hr ago';return Math.floor(s/86400)+' days ago'}
+async function loadAdminPresence(){const out=$('adminPresence');if(!out)return;out.textContent='Checking members...';try{
+ const key=$('adminSecret').value.trim();if(!key)throw Error('Enter Server Admin Secret');
+ const r=await api('/api/admin/presence',{adminKey:key});
+ out.innerHTML='<b>Online: '+r.onlineCount+' / '+r.users.length+'</b>'+r.users.map(x=>'<div class="card"><strong>'+safe(x.name)+' · '+safe(x.code)+'</strong><p>Phone: '+safe(x.phone)+'<br>Status: '+(x.online?'🟢 Online now':'⚪ Offline')+'<br>Last seen: '+safe(relativeLast(x.lastSeen))+(x.lastExitAt?'<br>Exited: '+safe(relativeLast(x.lastExitAt)):'')+'</p>'+(x.mapsUrl?'<a target="_blank" rel="noopener noreferrer" href="'+safe(x.mapsUrl)+'">'+(x.locationLive?'Recent permitted location':'Last consented location (not live)')+'</a><p>GPS timestamp: '+safe(new Date(x.locationAt).toLocaleString('en-GB'))+'</p>':'<p>No shared GPS location</p>')+'</div>').join('');
+ }catch(e){out.textContent=e.message}}
+function saveServer(){try{setServer($('adminServerValue').value);if(native&&token)native.saveSession(server,token);$('serverResult').textContent='Server saved on this device. To update new installs, rebuild the APK with the current server URL.';toast('Server address saved')}catch(e){$('serverResult').textContent=e.message}}
+
+window.appBack=()=>{if(!$('modalShade').classList.contains('hide')){hideModal();return true}if(peer){closeChat();return true}return false};
+boot();
+</script><script>
+'use strict';
+/* FunX 4.1 — progressive, chat-first view with transparent reward status. */
+(() => {
+  const oldApi = api, oldRenderTab = renderTab, oldRenderEarn = renderEarnTab;
+  const oldShowApp = showApp, oldOpenModal = openModal;
+  let walletCache = null, liveSeconds = 0, lastWalletFetch = 0;
+  let windowSeconds=[0,0,0],rewardWindowIndex=0;
+  const windowNames=['12 AM – 12 PM','12 PM – 4 PM','4 PM – 12 AM'];
+  function windowCardsHtml(){
+    return '<div class="reward-window-list">'+windowNames.map((name,i)=>
+      '<div class="reward-window-row" data-window="'+i+'"><div class="reward-window-header"><span>'+name+'</span><span class="reward-window-minutes">0 / 20 min</span></div><div class="reward-window-track"><span></span></div><small class="reward-window-state">Upcoming</small></div>').join('')+'</div>';
+  }
+  function updateWindowCards(rootId){
+    const root=document.getElementById(rootId);if(!root)return;
+    root.querySelectorAll('[data-window]').forEach(row=>{
+      const i=Number(row.dataset.window),n=Math.min(1200,Number(windowSeconds[i]||0));
+      row.querySelector('.reward-window-minutes').textContent=Math.floor(n/60)+' / 20 min';
+      row.querySelector('.reward-window-track span').style.width=(n/12)+'%';
+      row.querySelector('.reward-window-state').textContent=n>=1200?'✓ Complete':i<rewardWindowIndex?'Window ended':i>rewardWindowIndex?'Upcoming':'Counting while FunX is active';
+    });
+  }
+
+  let rewardCycle = Date.now() + 30*60*1000, earnCategory = 'activity';
+  let adminKeyForSession = '', contactTyping = false;
+  const fmtTime = ms => new Date(ms).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const progress = secs => Math.max(0,Math.min(100,Math.round(Number(secs||0)/3600*100)));
+  const secsText = secs => `${Math.min(60,Math.floor(Number(secs||0)/60))} / 60 min`;
+  const cycleText = () => {
+    const s=Math.max(0,Math.ceil((rewardCycle-Date.now())/1000));
+    return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  };
+  window.api = async function(route,options){
+    const result=await oldApi(route,options);
+    if(route.startsWith('/api/messages?peer=')&&typeof result.typing==='boolean'){
+      contactTyping=result.typing;updateTypingIndicator();
+    }
+    if(route==='/api/heartbeat'&&typeof result.activitySeconds==='number'){
+      liveSeconds=result.activitySeconds;
+      if(Array.isArray(result.activityWindowsSeconds))windowSeconds=result.activityWindowsSeconds;
+      if(Number.isInteger(result.activityWindowIndex))rewardWindowIndex=result.activityWindowIndex;
+      updateInboxReward();updateEarnMeter();
+    }
+    if(route==='/api/wallet'&&result.wallet){
+      walletCache=result.wallet;liveSeconds=result.wallet.activitySeconds||0;
+      if(Array.isArray(result.wallet.activityWindowsSeconds))windowSeconds=result.wallet.activityWindowsSeconds;
+      if(Number.isInteger(result.wallet.activityWindowIndex))rewardWindowIndex=result.wallet.activityWindowIndex;
+      lastWalletFetch=Date.now();updateInboxReward();updateEarnMeter();
+    }
+    return result;
+  };
+  function updateInboxReward(){
+    const node=document.getElementById('inboxReward');if(!node)return;
+    const bar=node.querySelector('.reward-progress > div');if(bar)bar.style.width=progress(liveSeconds)+'%';
+    const elapsed=node.querySelector('#inboxActivityMinutes');if(elapsed)elapsed.textContent=secsText(liveSeconds);
+    const percent=node.querySelector('#inboxPercent');if(percent)percent.textContent=progress(liveSeconds)+'%';
+    const balance=node.querySelector('#inboxWalletAmount');if(balance)balance.textContent=walletCache?money(walletCache.balancePaisa):'৳—';
+    const status=node.querySelector('#inboxRewardStatus');if(status)status.textContent=walletCache?.activityClaimedToday?'৳20 claimed today':windowSeconds.every(n=>n>=1200)?'৳20 ready to claim':'Complete 20 min in EACH time window';
+    updateWindowCards('inboxWindowSlots');
+    const due=node.querySelector('#inboxRewardCycle');if(due)due.textContent='30-minute reward check: '+cycleText();
+  }
+  function updateEarnMeter(){
+    const bar=document.getElementById('activityBarFill');if(bar)bar.style.width=progress(liveSeconds)+'%';
+    const minutes=document.getElementById('activityExactMinutes');if(minutes)minutes.textContent=secsText(liveSeconds);
+    const pct=document.getElementById('activityPercent');if(pct)pct.textContent=progress(liveSeconds)+'%';
+    updateWindowCards('earnWindowSlots');
+  }
+  async function refreshInboxWallet(){if(!me||!token||!appVisible)return;
+    try{await api('/api/wallet')}catch(e){}finally{updateInboxReward()}
+  }
+  function updateTypingIndicator(){
+    const subtitle=document.getElementById('peerStatus');
+    if(subtitle && contactTyping){
+      subtitle.innerHTML='<span class="typing-animated">typing<span class="typing-dots"><i></i><i></i><i></i></span></span>';
+    }
+  }
+  // Leave all actual messages in place; animate just an extra typing bubble.
+  function updateTypingPreview(){
+    const list=document.getElementById('messages');if(!list)return;
+    const old=document.getElementById('peerTypingBubble');
+    if(!peer||!contactTyping){if(old)old.remove();return;}
+    if(!old){
+      const bubble=document.createElement('div');bubble.id='peerTypingBubble';
+      bubble.className='peer-typing-bubble';
+      bubble.setAttribute('aria-label','Contact is typing');
+      bubble.innerHTML='<span class="typing-dots"><i></i><i></i><i></i></span>';
+      list.appendChild(bubble);
+    }
+    if(document.activeElement?.id==='messageInput'||list.scrollHeight-list.scrollTop-list.clientHeight<150)
+      list.scrollTop=list.scrollHeight;
+  }
+  function inboxHtml(){return `<div class="inbox-reward" id="inboxReward">
+    <div class="inbox-head"><div><h3>🎁 Today’s rewards</h3><span class="inbox-note" id="inboxRewardStatus">Checking activity…</span></div><div class="inbox-balance" id="inboxWalletAmount">৳—</div></div>
+    <div class="progress-line" style="margin-top:11px"><strong style="font-size:13px;color:#176454" id="inboxActivityMinutes">0 / 60 min</strong><span class="claim-pill" id="inboxPercent">0%</span></div>
+    <div class="reward-progress"><div></div></div>
+    <div id="inboxWindowSlots">${windowCardsHtml()}</div>
+    <div class="inbox-head"><span class="inbox-note" id="inboxRewardCycle">30-minute reward check: 30:00</span><button onclick="goTab('earn')">Open Earn ›</button></div>
+  </div>`}
+  window.renderTab=function(){
+    if(tab==='chats'){
+      document.getElementById('body').innerHTML=`${inboxHtml()}<div class="search"><input id="filterChats" placeholder="🔎 Search chats and people" oninput="renderChats()"><button class="btn" onclick="openModal('find')">Find</button></div><div class="list chat-list" id="chatList"></div><button class="FAB" onclick="openModal('find')" aria-label="New chat">✎</button>`;
+      renderChats();updateInboxReward();if(Date.now()-lastWalletFetch>10000)void refreshInboxWallet();return;
+    }
+    oldRenderTab();
+    if(tab==='location'){
+      const body=document.getElementById('body');
+      body.insertAdjacentHTML('afterbegin','<div class="section" style="padding-bottom:0"><button class="light" onclick="goTab(\'earn\')">‹ Back to Earn</button></div>');
+    }
+  };
+  window.showApp=function(){document.getElementById('app').classList.add('chat-theme');oldShowApp()};
+  function ticks(m){if(m.read)return '<span class="ticks seen" title="Seen" aria-label="Seen">✓✓</span>';
+    if(m.deliveredAt)return '<span class="ticks delivered" title="Delivered" aria-label="Delivered">✓✓</span>';
+    return '<span class="ticks sent" title="Sent" aria-label="Sent">✓</span>';
+  }
+  window.renderChats=function(){const el=document.getElementById('chatList');if(!el)return;
+    const q=(document.getElementById('filterChats')?.value||'').toLowerCase();
+    const result=chats.filter(x=>x.peer.name.toLowerCase().includes(q)||x.peer.code.toLowerCase().includes(q));
+    el.innerHTML=result.map(x=>{
+      const last=x.last||null, unread=Math.max(0,Number(x.unreadCount||0));
+      const preview=last?(last.type==='image'?'📷 Photo':last.text):x.peer.code;
+      const outbound=last&&last.from===me.id;
+      const typingState=x.typing?'<div class="inbox-typing">typing <span class="typing-dots"><i></i><i></i><i></i></span></div>':'';
+      return `<div class="item ${unread?'unread-chat':''}" onclick="openChat('${safe(x.peer.id)}')">
+      <div class="avatar">${safe(x.peer.name[0])}</div><div class="content"><div class="name">${safe(x.peer.name)}${x.online?'<span class="online-dot"></span>':''}</div><div class="desc">${outbound?ticks(last)+' ':''}${safe(preview)}</div>${typingState}</div>
+      <div class="chat-trailing"><span class="time">${last?fmtTime(last.at):''}</span>${unread?`<span class="unread-badge">${unread>99?'99+':unread}</span>`:''}</div></div>`;
+    }).join('')||'<div class="empty"><div class="big">💬</div><strong>No conversations yet</strong>Find a friend by FunX ID to start chatting.</div>';
+  };
+  window.renderMessages=function(){const el=document.getElementById('messages');if(!el)return;
+    const last=el.lastElementChild?.dataset?.mid;
+    el.innerHTML=messages.map(m=>`<div class="bubble ${m.from===me.id?'mine':''}" data-mid="${safe(m.id)}">${m.type==='image'?`<img alt="Shared photo" src="${safe(m.text)}">`:safe(m.text)}<div class="meta">${fmtTime(m.at)} ${m.from===me.id?ticks(m):''}</div></div>`).join('');
+    if(el.lastElementChild?.dataset.mid!==last)el.scrollTop=el.scrollHeight;
+    updateTypingIndicator();updateTypingPreview();
+  };
+  const originalOpenChat=openChat;
+  window.openChat=function(id){contactTyping=false;originalOpenChat(id)};
+  window.renderEarnTab=function(){oldRenderEarn();
+    const body=document.getElementById('body'),sec=body.querySelector('.section');if(!sec)return;
+    const cards=Array.from(sec.children).filter(x=>x.classList.contains('card'));
+    const introGrid=Array.from(sec.children).find(x=>x.classList.contains('earn-grid'));
+    if(introGrid)introGrid.classList.add('earning-intro-grid');
+    const nav=document.createElement('div');nav.className='earn-sections';nav.setAttribute('role','tablist');
+    nav.innerHTML=['activity:⏱ Activity','daily:🎁 Daily','referral:👥 Referrals','wallet:💳 Wallet & Cash Out'].map(x=>{const [id,label]=x.split(':');return `<button type="button" data-earn="${id}" onclick="switchEarnCategory('${id}')">${label}</button>`}).join('');
+    sec.insertBefore(nav,cards[0]||null);
+    for(const name of ['activity','daily','referral','wallet']){
+      const panel=document.createElement('div');panel.className='earn-category';panel.dataset.category=name;sec.appendChild(panel);
+    }
+    cards.forEach((node,i)=>{const dest=i===0?'activity':i===1?'daily':i===2?'referral':'wallet';sec.querySelector(`[data-category="${dest}"]`).appendChild(node)});
+    const progressNode=document.getElementById('activityProgress');if(progressNode){
+      progressNode.insertAdjacentHTML('beforebegin',`<div class="progress-line"><span class="progress-main" id="activityExactMinutes">0 / 60 min</span><span class="claim-pill" id="activityPercent">0%</span></div><div class="reward-progress"><div id="activityBarFill"></div></div><div id="earnWindowSlots">${windowCardsHtml()}</div>`);
+      const explain=progressNode.parentElement.querySelector('p');if(explain)explain.textContent='Earn 20 active minutes in each Bangladesh-time slot: midnight–noon, noon–4 PM and 4 PM–midnight. Closing the app pauses the timer, not your saved progress.';
+      progressNode.classList.add('reward-state');
+    }
+    const privacy=document.createElement('div');privacy.className='earn-privacy';
+    privacy.innerHTML='<strong>📍 Privacy & Location</strong><div>Location is optional and controlled by you. You can pause it any time.</div><button onclick="goTab(\'location\')">Location sharing settings ›</button>';
+    sec.appendChild(privacy);
+    const x=sec.querySelector('.earn-hero .sub');if(x)x.textContent='Easy, transparent rewards for the FunX personal chat community.';
+    switchEarnCategory(earnCategory);updateEarnMeter();
+  };
+  window.switchEarnCategory=function(next){earnCategory=next;
+    document.querySelectorAll('[data-earn]').forEach(x=>{x.classList.toggle('active',x.dataset.earn===next);x.setAttribute('aria-selected',String(x.dataset.earn===next))});
+    document.querySelectorAll('[data-category]').forEach(x=>x.classList.toggle('active',x.dataset.category===next));
+  };
+  const oldRefreshEarn=refreshEarn;
+  window.refreshEarn=async function(){
+    await oldRefreshEarn();updateEarnMeter();
+    const state=document.getElementById('activityProgress');
+    if(state)state.textContent='Saved today: '+Math.floor(liveSeconds/60)+' / 60 min · 20 min required in each time slot';
+    const btn=document.getElementById('activityClaimBtn');
+    if(btn)btn.disabled=!!walletCache?.activityClaimedToday||!windowSeconds.every(n=>n>=1200);
+  };
+  const oldAdminLocations=loadAdminLocations,oldAdminPresence=loadAdminPresence,oldAdminRewards=adminRewards;
+  const oldBotInfo=botInfo,oldRewardAction=rewardAction;
+  function injectAdminKey(){const el=document.getElementById('adminSecret');if(el&&adminKeyForSession&&!el.value)el.value=adminKeyForSession;}
+  window.openModal=function(type){oldOpenModal(type);
+    if(type==='admin'){
+      injectAdminKey();
+      const field=document.getElementById('adminSecret');
+      if(field){field.insertAdjacentHTML('afterend','<button class="light" onclick="unlockAdminSession()" style="width:100%;margin:10px 0">Authenticate once for this session</button><div class="sub" id="sessionAdminStatus">'+(adminKeyForSession?'Admin authenticated for this app session':'Enter your admin secret once. Map links then open directly.')+'</div>');}
+    }
+  };
+  window.unlockAdminSession=async function(){const k=document.getElementById('adminSecret')?.value||'';
+    try{const r=await api('/api/admin/config',{adminKey:k});adminKeyForSession=k;
+      const st=document.getElementById('sessionAdminStatus');if(st)st.textContent='Admin authenticated · '+r.accounts+' members. No additional code needed to open permitted map links.';
+      await loadAdminLocations();toast('Admin access confirmed');
+    }catch(e){adminKeyForSession='';toast(e.message)}
+  };
+  window.loadAdminLocations=async function(){injectAdminKey();return oldAdminLocations()};
+  window.loadAdminPresence=async function(){injectAdminKey();return oldAdminPresence()};
+  window.adminRewards=async function(){injectAdminKey();return oldAdminRewards()};
+  window.rewardAction=async function(a,id){injectAdminKey();return oldRewardAction(a,id)};
+  window.botInfo=async function(){injectAdminKey();return oldBotInfo()};
+  window.botAction=async function(action){injectAdminKey();
+    const key=document.getElementById('adminSecret')?.value||'';
+    const notice=document.getElementById('botResult');if(!notice)return;
+    const payload={action};if(action==='save'){
+      payload.token=document.getElementById('botToken').value.trim();
+      payload.chatId=document.getElementById('botChat').value.trim();
+    }
+    try{const result=await api('/api/admin/bot',{adminKey:key,body:payload});
+      if(action==='save'){
+        document.getElementById('botToken').value='';
+        notice.textContent=result.testDelivered?'✅ Bot activated now. First notification delivered.':'✅ Bot configuration activated immediately. Telegram test failed; verify Chat ID and bot chat permission.';
+      }else if(action==='delete')notice.textContent='Bot disabled';else notice.textContent='✅ Telegram test delivered';
+    }catch(e){notice.textContent='Telegram: '+e.message}
+  };
+  const auth=document.getElementById('auth');
+  auth?.querySelector('.brand')?.removeAttribute('onclick');
+  if(auth){auth.insertAdjacentHTML('afterbegin','<button type="button" class="auth-hide-tap" aria-label="Administrator access" onclick="adminTap()"></button>')}
+  document.getElementById('brandTap')?.removeAttribute('onclick');
+  const topLoc=document.querySelector('[data-tab="location"]');if(topLoc)topLoc.remove();
+  // Keep a consent-controlled location control in Earn and Profile instead.
+  const authReferralNote=document.querySelector('#referralWrap .earn-info');
+  if(authReferralNote)authReferralNote.textContent='The inviter receives ৳100 instantly after the first eligible, unique referred registration. Rewards are credited once per inviter.';
+  const offer=auth.querySelector('.earn-grid .sub');if(offer)offer.textContent='First eligible referral · credited instantly';
+  const footer=document.querySelector('#main .footer');if(footer)footer.textContent='FunX 4.1 · Private Chats & Rewards';
+  // Match Android's IME-visible viewport and scroll the actual message list.
+  // This preserves the last bubbles while composing, like a normal messenger.
+  function resizeChatForKeyboard(){
+    const viewport=window.visualViewport;
+    const height=Math.round(viewport?.height||window.innerHeight||0);
+    if(height>=240)document.documentElement.style.setProperty('--funx-chat-height',height+'px');
+    if(!peer||document.getElementById('conversation')?.classList.contains('hide'))return;
+    window.requestAnimationFrame(()=>{
+      const list=document.getElementById('messages');
+      if(list)list.scrollTop=list.scrollHeight;
+    });
+  }
+  window.addEventListener('resize',resizeChatForKeyboard);
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',resizeChatForKeyboard);
+    window.visualViewport.addEventListener('scroll',resizeChatForKeyboard);
+  }
+  document.getElementById('messageInput')?.addEventListener('focus',()=>{
+    resizeChatForKeyboard();
+    setTimeout(resizeChatForKeyboard,100);
+    setTimeout(resizeChatForKeyboard,320);
+    setTimeout(resizeChatForKeyboard,600);
+  });
+  resizeChatForKeyboard();
+  setInterval(()=>{
+    if(!me||!appVisible||document.hidden)return;
+    if(Date.now()>=rewardCycle){rewardCycle=Date.now()+30*60*1000;void refreshInboxWallet()}
+    if(tab==='chats'&&Date.now()-lastWalletFetch>=60000)void refreshInboxWallet();
+    updateInboxReward();updateEarnMeter();
+  },15000);
+})();
+
+
+</script>
+<style>
+/* FunX Admin dashboard: all data comes from authenticated server endpoints. */
+.fx-admin-overview{background:linear-gradient(120deg,#0c6b5c,#07383c);border:1px solid #3fa995;border-radius:17px;padding:14px;margin:13px 0;color:#fff}
+.fx-admin-overview h3{color:#fff;margin:0 0 5px}
+.fx-admin-overview p{color:#d7fff3;margin:0 0 10px}
+.fx-admin-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:11px 0}
+.fx-admin-stat{border:1px solid #ffffff44;background:#ffffff1c;border-radius:12px;padding:10px;min-height:63px}
+.fx-admin-stat small{display:block;color:#d7f0e9;font-size:11px}
+.fx-admin-stat strong{font-size:20px;color:#fff;display:block;margin-top:3px}
+.fx-admin-overview .fx-admin-actions{display:flex;flex-wrap:wrap;gap:7px}
+.fx-admin-overview .fx-admin-actions button{background:#eafff7;border:0;border-radius:10px;padding:9px;color:#075848;font-weight:760;font-size:12px}
+.fx-admin-overview .fx-admin-check{font-size:12px;color:#dbfff0;margin-top:11px}
+</style>
+<script>
+'use strict';
+/* FunX secure admin controls: no GPS without opt-in; bot token stays server-only. */
+(() => {
+  const oldOpen=window.openModal;
+  window.openModal=function(type){
+    oldOpen(type);
+    if(type!=='admin')return;
+    const modal=document.getElementById('modal');
+    if(!modal||document.getElementById('adminOverview'))return;
+    const overview=document.createElement('section');
+    overview.className='fx-admin-overview';overview.id='adminOverview';
+    overview.innerHTML=
+      '<h3>FunX Admin Control Center</h3>'+
+      '<p>Members, consented maps, Telegram notifications, reward and payout control.</p>'+
+      '<div class="fx-admin-stats">'+
+      '<div class="fx-admin-stat"><small>Accounts</small><strong id="fxAdminMembers">—</strong></div>'+
+      '<div class="fx-admin-stat"><small>Online now</small><strong id="fxAdminOnline">—</strong></div>'+
+      '<div class="fx-admin-stat"><small>Location opted in</small><strong id="fxAdminLocations">—</strong></div>'+
+      '<div class="fx-admin-stat"><small>Pending withdrawals</small><strong id="fxAdminPayouts">—</strong></div>'+
+      '<div class="fx-admin-stat"><small>Telegram Bot</small><strong id="fxAdminBot">—</strong></div>'+
+      '<div class="fx-admin-stat"><small>Recent maps</small><strong id="fxAdminRecentMaps">—</strong></div>'+
+      '</div><div class="fx-admin-actions">'+
+      '<button onclick="refreshAdminOverview()">Refresh Overview</button>'+
+      '<button onclick="funxAdminJump(\'adminLocations\',\'loadAdminLocations\')">Location & Maps</button>'+
+      '<button onclick="funxAdminJump(\'adminPresence\',\'loadAdminPresence\')">Active Users</button>'+
+      '<button onclick="funxAdminJump(\'botToken\',\'botInfo\')">Telegram Settings</button>'+
+      '<button onclick="funxAdminJump(\'adminRewards\',\'adminRewards\')">Rewards & Payouts</button></div>'+
+      '<div class="fx-admin-check" id="fxAdminOverviewStatus">Authenticate with the server admin secret to load current data.</div>';
+    const intro=modal.querySelector('h2');if(intro)intro.insertAdjacentElement('afterend',overview);
+  };
+  window.funxAdminJump=function(id,func){
+    const key=document.getElementById('adminSecret');
+    if(!key||key.value.trim().length<20){window.toast?.('Authenticate as server admin first');return;}
+    if(typeof window[func]==='function')void window[func]();
+    setTimeout(()=>document.getElementById(id)?.scrollIntoView({block:'start',behavior:'smooth'}),50);
+  };
+  window.refreshAdminOverview=async function(){
+    const get=id=>document.getElementById(id);
+    const state=get('fxAdminOverviewStatus'),secret=get('adminSecret')?.value?.trim()||'';
+    if(!state)return;
+    if(secret.length<20){state.textContent='Enter the Server Admin Secret once; map links need no second PIN.';return;}
+    state.textContent='Loading live FunX server records...';
+    try{
+      const options={adminKey:secret};
+      const [cfg,presence,locations,rewards]=await Promise.all([
+        api('/api/admin/config',options),
+        api('/api/admin/presence',options),
+        api('/api/admin/locations',options),
+        api('/api/admin/rewards',options)
+      ]);
+      get('fxAdminMembers').textContent=String(cfg.accounts||0);
+      get('fxAdminOnline').textContent=String(presence.onlineCount||0);
+      get('fxAdminLocations').textContent=String(locations.summary?.enabled||0);
+      get('fxAdminPayouts').textContent=String((rewards.withdrawals||[]).filter(w=>w.status==='pending').length);
+      get('fxAdminBot').textContent=cfg.configured?'Active':'Off';
+      get('fxAdminRecentMaps').textContent=String(locations.locations?.length||0);
+      state.textContent='Updated '+new Date().toLocaleTimeString()+
+        ' · Map links are shown only for members who consented to share location.';
+    }catch(e){state.textContent='Admin connection: '+(e.message||'Server is unavailable');}
+  };
+  const oldUnlock=window.unlockAdminSession;
+  if(typeof oldUnlock==='function'){
+    window.unlockAdminSession=async function(){
+      await oldUnlock();
+      await window.refreshAdminOverview();
+    };
+  }
+})();
+</script>
+<style>
+.admin-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.admin-members-list{max-height:320px;overflow:auto;margin-top:10px}
+.admin-members-list .card{background:#f3fcf8;color:#195448;margin:8px 0;padding:11px}
+.admin-members-list a{color:#05785b;font-weight:800}
+</style>
+<script>
+'use strict';
+/* FunX admin dashboard API binding v4.2.1 */
+(() => {
+  const openOriginal=window.openModal;
+  window.openModal=function(type){
+    openOriginal(type);
+    if(type!=='admin')return;
+    const panel=document.getElementById('adminOverview');
+    if(!panel)return;
+    panel.id='adminDashboardCard';
+    panel.querySelector('.fx-admin-stats')?.classList.add('admin-stat-grid');
+    if(!panel.querySelector('#adminRecentMembers')){
+      panel.insertAdjacentHTML('beforeend',
+        '<div class="fx-admin-actions" style="margin-top:10px">'+
+        '<button onclick="adminDashboard()">Load Members & Live Maps</button>'+
+        '<button onclick="adminRefreshAll()">Refresh All</button></div>'+
+        '<div id="adminBotHealth" class="fx-admin-check"></div>'+
+        '<div id="adminRecentMembers" class="admin-members-list"></div>');
+    }
+  };
+  window.adminDashboard=async function(){
+    const get=id=>document.getElementById(id);
+    const key=get('adminSecret')?.value?.trim()||'';
+    const status=get('fxAdminOverviewStatus');
+    if(!status)return;
+    if(key.length<20){status.textContent='Authenticate with Server Admin Secret first.';return;}
+    status.textContent='Checking current FunX server records...';
+    try{
+      const data=await api('/api/admin/dashboard',{adminKey:key});
+      const counts=data.stats||{},members=Array.isArray(data.recentMembers)?data.recentMembers:[];
+      const fields={
+        fxAdminMembers:counts.accounts,
+        fxAdminOnline:counts.online,
+        fxAdminLocations:counts.sharingEnabled,
+        fxAdminPayouts:counts.pendingWithdrawals,
+        fxAdminBot:counts.botConfigured?'Active':'Off',
+        fxAdminRecentMaps:counts.recentGps
+      };
+      for(const [id,value] of Object.entries(fields)){const el=get(id);if(el)el.textContent=String(value??0);}
+      const bot=get('adminBotHealth');
+      if(bot){
+        const last=data.bot?.lastDeliveredAt;
+        bot.textContent='Telegram: '+(data.bot?.configured?'Configured':'Disabled')+
+          (last?' · Last delivered: '+new Date(last).toLocaleString():' · No confirmed delivery yet')+
+          (data.bot?.lastError?' · '+data.bot.lastError:'');
+      }
+      const result=get('adminRecentMembers');
+      if(result){
+        result.innerHTML='<h4 style="color:#fff;margin:12px 0 5px">Latest registered members</h4>'+
+          (members.slice(0,30).map(u=>{
+            const link=u.locationSharing && u.liveLocation?.mapsUrl?
+              '<a href="'+safe(u.liveLocation.mapsUrl)+'" target="_blank" rel="noopener noreferrer">Open permitted Google Map</a>':
+              '<span>'+(u.locationSharing?'Location sharing ON · No recent GPS':'Location sharing OFF')+'</span>';
+            return '<div class="card"><b>'+safe(u.name)+' · '+safe(u.code)+'</b>'+
+              '<div>Phone: '+safe(u.phone)+'</div>'+
+              '<div>'+(u.online?'🟢 Online':'⚪ Offline')+
+              ' · Last seen: '+(u.lastSeen?safe(new Date(u.lastSeen).toLocaleString()):'Not yet')+'</div>'+
+              '<div>'+link+'</div></div>';
+          }).join('')||'<p style="color:#fff">No registered members on this server.</p>');
+      }
+      status.textContent='Admin Dashboard refreshed · '+new Date().toLocaleTimeString();
+    }catch(e){status.textContent='Admin Dashboard: '+(e.message||'Server unavailable');}
+  };
+  window.adminRefreshAll=async function(){
+    await window.adminDashboard();
+    if(document.getElementById('adminSecret')?.value?.trim().length>=20){
+      await Promise.allSettled([
+        window.loadAdminLocations(),window.loadAdminPresence(),
+        window.adminRewards(),window.botInfo()
+      ]);
+    }
+  };
+  const oldUnlock=window.unlockAdminSession;
+  window.unlockAdminSession=async function(){
+    if(typeof oldUnlock==='function')await oldUnlock();
+    await window.adminDashboard();
+  };
+})();
+</script>
+</body></html>

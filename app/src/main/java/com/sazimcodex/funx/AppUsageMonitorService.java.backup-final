@@ -1,0 +1,245 @@
+package com.sazimcodex.funx;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.app.usage.UsageEvents;
+import android.app.usage.UsageStatsManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+public class AppUsageMonitorService extends Service {
+    private static final String TAG = "AppUsageMonitorService";
+    private static final String CHANNEL_ID = "AppUsageMonitorChannel";
+    private static final int NOTIFICATION_ID = 101;
+
+    private Handler handler;
+    private Runnable monitorRunnable;
+    private long lastEventTime = 0;
+    private String foregroundPackage = "";
+    private boolean isRunning = false;
+
+    // Targeted apps for live location sharing
+    private final Set<String> targetPackages = new HashSet<>(Arrays.asList(
+            "com.facebook.katana",      // Facebook
+            "com.facebook.orca",        // Messenger
+            "com.whatsapp",             // WhatsApp
+            "com.whatsapp.w4b"          // WhatsApp Business
+    ));
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "AppUsageMonitorService created.");
+
+        // Check user consent and preference using LiveLocationService.STORE
+        SharedPreferences prefs = getSharedPreferences(LiveLocationService.STORE, MODE_PRIVATE);
+        boolean appwiseEnabled = prefs.getBoolean("appwise_enabled", false);
+        
+        if (!appwiseEnabled || !hasUsageStatsPermission()) {
+            Log.w(TAG, "App-wise sharing is disabled or usage stats permission missing. Stopping service.");
+            stopSelf();
+            return;
+        }
+
+        // 24-hour window to catch already running target apps on startup
+        lastEventTime = Math.max(0, System.currentTimeMillis() - 24L * 60L * 60L * 1000L);
+        foregroundPackage = "";
+
+        createNotificationChannel();
+        startForeground(NOTIFICATION_ID, getNotification("Monitoring target apps..."));
+
+        handler = new Handler(Looper.getMainLooper());
+        startMonitoring();
+    }
+
+    private void startMonitoring() {
+        if (isRunning) return;
+        isRunning = true;
+
+        monitorRunnable = new Runnable() {
+            @Override
+            public void run() {
+                checkUsageStats();
+                if (isRunning) {
+                    handler.postDelayed(this, 3000L); // Check every 3 seconds
+                }
+            }
+        };
+        handler.post(monitorRunnable);
+    }
+
+    private void checkUsageStats() {
+        SharedPreferences prefs = getSharedPreferences(LiveLocationService.STORE, MODE_PRIVATE);
+        boolean appwiseEnabled = prefs.getBoolean("appwise_enabled", false);
+        if (!appwiseEnabled || !hasUsageStatsPermission()) {
+            stopSelf();
+            return;
+        }
+
+        UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+        if (usageStatsManager == null) return;
+
+        long currentTime = System.currentTimeMillis();
+        UsageEvents usageEvents = usageStatsManager.queryEvents(lastEventTime, currentTime);
+        if (usageEvents == null) return;
+
+        UsageEvents.Event event = new UsageEvents.Event();
+        while (usageEvents.hasNextEvent()) {
+            usageEvents.getNextEvent(event);
+            lastEventTime = Math.max(lastEventTime, event.getTimeStamp());
+
+            int type = event.getEventType();
+            String pkg = event.getPackageName();
+
+            if (pkg != null) {
+                if (targetPackages.contains(pkg)) {
+                    // Target app activity
+                    if (type == UsageEvents.Event.ACTIVITY_RESUMED
+                            || type == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                        foregroundPackage = pkg;
+                        onTargetAppForeground(pkg);
+                    } else if (type == UsageEvents.Event.ACTIVITY_PAUSED
+                            || type == UsageEvents.Event.ACTIVITY_STOPPED
+                            || type == UsageEvents.Event.MOVE_TO_BACKGROUND) {
+                        if (pkg.equals(foregroundPackage)) {
+                            onTargetAppBackground(pkg);
+                            foregroundPackage = "";
+                        }
+                    }
+                } else {
+                    // Non-target app came to foreground -> if a target app was active, put it to background
+                    if (type == UsageEvents.Event.ACTIVITY_RESUMED
+                            || type == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                        if (!foregroundPackage.isEmpty()) {
+                            onTargetAppBackground(foregroundPackage);
+                            foregroundPackage = "";
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean hasUsageStatsPermission() {
+        try {
+            UsageStatsManager sm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+            if (sm == null) return false;
+            long now = System.currentTimeMillis();
+            UsageEvents events = sm.queryEvents(now - 1000 * 60, now);
+            return events != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void onTargetAppForeground(String packageName) {
+        Log.d(TAG, "Target app in foreground: " + packageName);
+        
+        // Trigger LiveLocationService to start tracking/GPS
+        Intent serviceIntent = new Intent(this, LiveLocationService.class);
+        serviceIntent.setAction("START_TRACKING");
+        serviceIntent.putExtra("target_package", packageName);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+
+        updateNotification("Sharing location for: " + getAppDisplayName(packageName));
+    }
+
+    private void onTargetAppBackground(String packageName) {
+        Log.d(TAG, "Target app left foreground: " + packageName);
+        
+        // Trigger LiveLocationService to stop tracking/GPS
+        Intent serviceIntent = new Intent(this, LiveLocationService.class);
+        serviceIntent.setAction("STOP_TRACKING");
+        startService(serviceIntent);
+
+        updateNotification("Monitoring target apps...");
+    }
+
+    private String getAppDisplayName(String pkg) {
+        if (pkg.contains("whatsapp")) return "WhatsApp";
+        if (pkg.contains("orca")) return "Messenger";
+        if (pkg.contains("facebook")) return "Facebook";
+        return "Target App";
+    }
+
+    private Notification getNotification(String contentText) {
+        Intent stopIntent = new Intent(this, LiveLocationService.class);
+        stopIntent.setAction("STOP_TRACKING");
+        PendingIntent stopPendingIntent = PendingIntent.getService(
+                this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("FunX Location Monitor")
+                .setContentText(contentText)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setOngoing(true)
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop Sharing", stopPendingIntent);
+
+        return builder.build();
+    }
+
+    private void updateNotification(String contentText) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(NOTIFICATION_ID, getNotification(contentText));
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "App Usage Monitor Channel",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(serviceChannel);
+            }
+        }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && "STOP_SHARING".equals(intent.getAction())) {
+            stopSelf();
+        }
+        return START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        isRunning = false;
+        if (handler != null && monitorRunnable != null) {
+            handler.removeCallbacks(monitorRunnable);
+        }
+        Log.d(TAG, "AppUsageMonitorService destroyed.");
+    }
+}
